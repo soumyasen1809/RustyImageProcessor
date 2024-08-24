@@ -54,7 +54,7 @@ impl Images {
         Ok(())
     }
 
-    pub fn add_data(&mut self, pix: Pixels) {
+    pub fn add_pixel(&mut self, pix: Pixels) {
         self.image_data.push(pix);
     }
 }

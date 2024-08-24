@@ -8,6 +8,30 @@ pub struct FlipVertical {
     image: Images,
 }
 
+pub enum OperationsTypes {
+    FLIPVERTICAL,
+    FLIPHORIZONTAL,
+    FLIP90LEFT,
+    FLIP90RIGHT,
+}
+
+impl OperationsTypes {
+    pub fn chain_operations(image: &Images, operations: Vec<OperationsTypes>) -> Images {
+        let mut new_image: Images = image.clone();
+
+        for ops in operations.iter() {
+            new_image = match ops {
+                OperationsTypes::FLIPVERTICAL => FlipVertical::new(&new_image).apply(),
+                OperationsTypes::FLIPHORIZONTAL => FlipHorizontal::new(&new_image).apply(),
+                OperationsTypes::FLIP90LEFT => Flip90Left::new(&new_image).apply(),
+                OperationsTypes::FLIP90RIGHT => Flip90Right::new(&new_image).apply(),
+            };
+        }
+
+        new_image
+    }
+}
+
 impl FlipVertical {
     pub fn new(image: &Images) -> Self {
         Self {
@@ -37,7 +61,7 @@ impl Transformation for FlipVertical {
 
             vec_slice.reverse();
             for pix in vec_slice.iter() {
-                flipped_image.add_data(pix.clone());
+                flipped_image.add_pixel(pix.clone());
             }
         }
 
@@ -78,7 +102,7 @@ impl Transformation for FlipHorizontal {
 
             vec_slice.reverse();
             for pix in vec_slice.iter() {
-                flipped_image.add_data(pix.clone());
+                flipped_image.add_pixel(pix.clone());
             }
         }
 
@@ -119,7 +143,7 @@ impl Transformation for Flip90Left {
 
             vec_slice.reverse();
             for pix in vec_slice.iter() {
-                flipped_image.add_data(pix.clone());
+                flipped_image.add_pixel(pix.clone());
             }
         }
 
@@ -159,7 +183,7 @@ impl Transformation for Flip90Right {
                 .collect();
 
             for pix in vec_slice.iter() {
-                flipped_image.add_data(pix.clone());
+                flipped_image.add_pixel(pix.clone());
             }
         }
 

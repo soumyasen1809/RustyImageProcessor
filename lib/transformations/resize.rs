@@ -1,5 +1,7 @@
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
+
 use super::rotate::Transformation;
-use crate::core::image::Images;
+use crate::core::{image::Images, pixel::Pixels};
 
 pub enum ResizingOperations {
     RESIZENEARESTNEIGHBOUR,
@@ -54,14 +56,31 @@ impl Transformation for ResizeNearestNeighbour {
         let x_ratio = self.image.get_width() as f64 / self.new_width as f64;
         let y_ratio = self.image.get_height() as f64 / self.new_height as f64;
 
-        for y_index in 0..self.new_height {
-            for x_index in 0..self.new_width {
-                let pix = self
-                    .image
-                    .get_pixel_at(x_index * x_ratio as u32, y_index * y_ratio as u32)
-                    .unwrap();
-                new_image.add_pixel(pix);
-            }
+        // for y_index in 0..self.new_height {
+        //     for x_index in 0..self.new_width {
+        //         let pix = self
+        //             .image
+        //             .get_pixel_at(x_index * x_ratio as u32, y_index * y_ratio as u32)
+        //             .unwrap();
+        //         new_image.add_pixel(pix);
+        //     }
+        // }
+        let pixel_list = (0..self.new_height)
+            .into_par_iter()
+            .flat_map(|y_index| {
+                (0..self.new_width)
+                    .into_par_iter()
+                    .map(|x_index| {
+                        self.image
+                            .get_pixel_at(x_index * x_ratio as u32, y_index * y_ratio as u32)
+                            .unwrap()
+                    })
+                    .collect::<Vec<Pixels>>()
+            })
+            .collect::<Vec<Pixels>>();
+
+        for pix in pixel_list.iter() {
+            new_image.add_pixel(pix.clone());
         }
 
         new_image

@@ -1,3 +1,5 @@
+use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
+
 use crate::core::{image::Images, pixel::Pixels};
 
 pub trait Transformation {
@@ -51,18 +53,40 @@ impl Transformation for FlipVertical {
             Vec::new(),
         );
 
-        for y_index in (0..self.image.get_height()).rev() {
-            let mut vec_slice: Vec<Pixels> = Vec::from_iter(
-                original_image[(y_index * self.image.get_width()) as usize
-                    ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
-                    .iter()
-                    .cloned(),
-            );
+        // for y_index in (0..self.image.get_height()).rev() {
+        //     let mut vec_slice: Vec<Pixels> = Vec::from_iter(
+        //         original_image[(y_index * self.image.get_width()) as usize
+        //             ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
+        //             .iter()
+        //             .cloned(),
+        //     );
 
-            vec_slice.reverse();
-            for pix in vec_slice.iter() {
-                flipped_image.add_pixel(pix.clone());
-            }
+        //     vec_slice.reverse();
+        //     for pix in vec_slice.iter() {
+        //         flipped_image.add_pixel(pix.clone());
+        //     }
+        // }
+        let pixel_list = (0..self.image.get_height())
+            .into_par_iter()
+            .rev()
+            .flat_map(|y_index| {
+                let mut vec_slice: Vec<Pixels> = Vec::from_iter(
+                    original_image[(y_index * self.image.get_width()) as usize
+                        ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
+                        .iter()
+                        .cloned(), // .collect::<Vec<Pixels>>(),    // collect here not needed
+                );
+
+                // vec_slice.into_iter().rev().collect::<Vec<Pixels>>() // WORKS
+                // This creates a new iterator that yields the elements of vec_slice in reverse order and then collects them into a new Vec<Pixels>
+                // But, if we do, vec_slice.reverse().  it reverses the vector in place and returns (), which is a unit type. This means that the closure inside the map function does not return the reversed vector, but rather (). Hence we need to seperately return vec_slice after reversing.
+                vec_slice.reverse();
+                return vec_slice;
+            })
+            .collect::<Vec<Pixels>>();
+
+        for pix in pixel_list.iter() {
+            flipped_image.add_pixel(pix.clone());
         }
 
         flipped_image

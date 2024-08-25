@@ -18,9 +18,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let image_read = image_reader(path);
     let transform_operations = vec![
-        // TransformationOperations::FLIPVERTICAL,
-        // TransformationOperations::FLIPHORIZONTAL,
-        TransformationOperations::FLIP90LEFT,
+        TransformationOperations::FLIPVERTICAL,
+        TransformationOperations::FLIPHORIZONTAL,
+        // TransformationOperations::FLIP90LEFT,
         // TransformationOperations::FLIP90RIGHT,
     ];
     let flipped_image =

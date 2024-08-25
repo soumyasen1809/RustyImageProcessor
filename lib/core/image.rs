@@ -36,7 +36,7 @@ impl Images {
     }
 
     pub fn get_pixel_at(&self, x: u32, y: u32) -> Result<Pixels, Box<dyn std::error::Error>> {
-        let location = x * self.width + y;
+        let location = y * self.width + x;
         let pixel = self.image_data.get(location as usize);
 
         Ok(pixel.unwrap().clone())

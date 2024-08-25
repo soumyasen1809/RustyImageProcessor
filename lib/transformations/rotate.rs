@@ -53,19 +53,6 @@ impl Transformation for FlipVertical {
             Vec::new(),
         );
 
-        // for y_index in (0..self.image.get_height()).rev() {
-        //     let mut vec_slice: Vec<Pixels> = Vec::from_iter(
-        //         original_image[(y_index * self.image.get_width()) as usize
-        //             ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
-        //             .iter()
-        //             .cloned(),
-        //     );
-
-        //     vec_slice.reverse();
-        //     for pix in vec_slice.iter() {
-        //         flipped_image.add_pixel(pix.clone());
-        //     }
-        // }
         let pixel_list = (0..self.image.get_height())
             .into_par_iter()
             .rev()
@@ -74,12 +61,9 @@ impl Transformation for FlipVertical {
                     original_image[(y_index * self.image.get_width()) as usize
                         ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
                         .iter()
-                        .cloned(), // .collect::<Vec<Pixels>>(),    // collect here not needed
+                        .cloned(),
                 );
 
-                // vec_slice.into_iter().rev().collect::<Vec<Pixels>>() // WORKS
-                // This creates a new iterator that yields the elements of vec_slice in reverse order and then collects them into a new Vec<Pixels>
-                // But, if we do, vec_slice.reverse().  it reverses the vector in place and returns (), which is a unit type. This means that the closure inside the map function does not return the reversed vector, but rather (). Hence we need to seperately return vec_slice after reversing.
                 vec_slice.reverse();
                 return vec_slice;
             })
@@ -116,19 +100,6 @@ impl Transformation for FlipHorizontal {
             Vec::new(),
         );
 
-        // for y_index in 0..self.image.get_height() {
-        //     let mut vec_slice: Vec<Pixels> = Vec::from_iter(
-        //         original_image[(y_index * self.image.get_width()) as usize
-        //             ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
-        //             .iter()
-        //             .cloned(),
-        //     );
-
-        //     vec_slice.reverse();
-        //     for pix in vec_slice.iter() {
-        //         flipped_image.add_pixel(pix.clone());
-        //     }
-        // }
         let pixel_list = (0..self.image.get_height())
             .into_par_iter()
             .flat_map(|y_index| {
@@ -175,19 +146,6 @@ impl Transformation for Flip90Left {
             Vec::new(),
         );
 
-        // for x_index in 0..self.image.get_width() {
-        //     let mut vec_slice: Vec<Pixels> = original_image
-        //         .iter()
-        //         .skip(x_index as usize)
-        //         .step_by(self.image.get_height() as usize)
-        //         .cloned()
-        //         .collect();
-
-        //     vec_slice.reverse();
-        //     for pix in vec_slice.iter() {
-        //         flipped_image.add_pixel(pix.clone());
-        //     }
-        // }
         let pixel_list = (0..self.image.get_width())
             .into_par_iter()
             .flat_map(|x_index| {
@@ -234,18 +192,6 @@ impl Transformation for Flip90Right {
             Vec::new(),
         );
 
-        // for x_index in 0..self.image.get_width() {
-        //     let vec_slice: Vec<Pixels> = original_image
-        //         .iter()
-        //         .skip(x_index as usize)
-        //         .step_by(self.image.get_height() as usize)
-        //         .cloned()
-        //         .collect();
-
-        //     for pix in vec_slice.iter() {
-        //         flipped_image.add_pixel(pix.clone());
-        //     }
-        // }
         let pixel_list = (0..self.image.get_width())
             .into_par_iter()
             .flat_map(|x_index| {

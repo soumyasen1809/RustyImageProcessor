@@ -70,9 +70,12 @@ impl Transformation for ResizeNearestNeighbour {
             .flat_map(|y_index| {
                 (0..self.new_width)
                     .into_par_iter()
-                    .map(|x_index| {
+                    .map(move |x_index| {
                         self.image
-                            .get_pixel_at(x_index * x_ratio as u32, y_index * y_ratio as u32)
+                            .get_pixel_at(
+                                (x_index as f64 * x_ratio) as u32,
+                                (y_index as f64 * y_ratio) as u32,
+                            )
                             .unwrap()
                     })
                     .collect::<Vec<Pixels>>()

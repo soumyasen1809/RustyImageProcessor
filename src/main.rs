@@ -5,7 +5,7 @@ use image_processing_lib::{
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let path = "assets/Cube.png";
+    let path = "assets/lenna.png";
     let image = ImageReader::open(path)?.decode()?;
 
     println!(
@@ -18,10 +18,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let image_read = image_reader(path);
     let transform_operations = vec![
-        TransformationOperations::FLIPVERTICAL,
-        // TransformationOperations::FLIPHORIZONTAL,
-        // TransformationOperations::FLIP90LEFT,
-        TransformationOperations::FLIP90RIGHT,
+        // TransformationOperations::FLIPVERTICAL,
+        TransformationOperations::FLIPHORIZONTAL,
+        TransformationOperations::FLIP90LEFT,
+        // TransformationOperations::FLIP90RIGHT,
     ];
     let flipped_image =
         TransformationOperations::chain_operations(&image_read.unwrap(), transform_operations);

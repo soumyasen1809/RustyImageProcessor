@@ -116,18 +116,36 @@ impl Transformation for FlipHorizontal {
             Vec::new(),
         );
 
-        for y_index in 0..self.image.get_height() {
-            let mut vec_slice: Vec<Pixels> = Vec::from_iter(
-                original_image[(y_index * self.image.get_width()) as usize
-                    ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
-                    .iter()
-                    .cloned(),
-            );
+        // for y_index in 0..self.image.get_height() {
+        //     let mut vec_slice: Vec<Pixels> = Vec::from_iter(
+        //         original_image[(y_index * self.image.get_width()) as usize
+        //             ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
+        //             .iter()
+        //             .cloned(),
+        //     );
 
-            vec_slice.reverse();
-            for pix in vec_slice.iter() {
-                flipped_image.add_pixel(pix.clone());
-            }
+        //     vec_slice.reverse();
+        //     for pix in vec_slice.iter() {
+        //         flipped_image.add_pixel(pix.clone());
+        //     }
+        // }
+        let pixel_list = (0..self.image.get_height())
+            .into_par_iter()
+            .flat_map(|y_index| {
+                let mut vec_slice: Vec<Pixels> = Vec::from_iter(
+                    original_image[(y_index * self.image.get_width()) as usize
+                        ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
+                        .iter()
+                        .cloned(),
+                );
+
+                vec_slice.reverse();
+                return vec_slice;
+            })
+            .collect::<Vec<Pixels>>();
+
+        for pix in pixel_list.iter() {
+            flipped_image.add_pixel(pix.clone());
         }
 
         flipped_image

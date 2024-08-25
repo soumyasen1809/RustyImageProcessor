@@ -5,6 +5,7 @@ use crate::core::{image::Images, pixel::Pixels};
 
 pub enum ResizingOperations {
     RESIZENEARESTNEIGHBOUR,
+    RESIZEBILINEAR,
 }
 
 impl ResizingOperations {
@@ -20,7 +21,10 @@ impl ResizingOperations {
             new_image = match ops {
                 ResizingOperations::RESIZENEARESTNEIGHBOUR => {
                     ResizeNearestNeighbour::new(new_width, new_height, &new_image).apply()
-                } // ResizingOperations::FLIPHORIZONTAL => FlipHorizontal::new(&new_image).apply(),
+                }
+                ResizingOperations::RESIZEBILINEAR => {
+                    ResizeBilinearInterpolation::new(new_width, new_height, &new_image).apply()
+                }
             };
         }
 
@@ -84,6 +88,63 @@ impl Transformation for ResizeNearestNeighbour {
 
         for pix in pixel_list.iter() {
             new_image.add_pixel(pix.clone());
+        }
+
+        new_image
+    }
+}
+
+pub struct ResizeBilinearInterpolation {
+    new_width: u32,
+    new_height: u32,
+    image: Images,
+}
+
+impl ResizeBilinearInterpolation {
+    pub fn new(new_width: u32, new_height: u32, image: &Images) -> Self {
+        Self {
+            new_width,
+            new_height,
+            image: image.clone(),
+        }
+    }
+}
+
+impl Transformation for ResizeBilinearInterpolation {
+    fn apply(&self) -> Images {
+        let mut new_image = Images::new(
+            self.new_width,
+            self.new_height,
+            self.image.get_channels(),
+            Vec::new(),
+        );
+
+        let x_ratio = self.image.get_width() as f64 / self.new_width as f64;
+        let y_ratio = self.image.get_height() as f64 / self.new_height as f64;
+
+        // AI: Copilot use to get algorithm (in C++)
+        for y_index in 0..self.new_height {
+            for x_index in 0..self.new_width {
+                let x1 = (x_index as f64 * x_ratio) as u32;
+                let y1 = (y_index as f64 * y_ratio) as u32;
+                let x2 = ((x1 + 1).min((self.image.get_width() - 1).try_into().unwrap())) as u32;
+                let y2 = ((y1 + 1).min((self.image.get_height() - 1).try_into().unwrap())) as u32;
+                let x_diff =
+                    (x_index as f64 * x_ratio) as f64 - ((x_index as f64 * x_ratio) as u32) as f64;
+                let y_diff =
+                    (y_index as f64 * y_ratio) as f64 - ((y_index as f64 * y_ratio) as u32) as f64;
+
+                let top_left = self.image.get_pixel_at(x1, y1).unwrap();
+                let top_right = self.image.get_pixel_at(x2, y1).unwrap();
+                let bottom_left = self.image.get_pixel_at(x1, y2).unwrap();
+                let bottom_right = self.image.get_pixel_at(x2, y2).unwrap();
+
+                let top = top_left.clone() + (top_right - top_left) * x_diff;
+                let bottom = bottom_left.clone() + (bottom_right - bottom_left) * x_diff;
+                let pix = (top).clone() + (bottom - top) * y_diff;
+
+                new_image.add_pixel(pix);
+            }
         }
 
         new_image

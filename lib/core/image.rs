@@ -49,6 +49,9 @@ impl Images {
         pixel: Pixels,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let location = x * self.width + y;
+        if self.image_data.len() < (location - 1).try_into().unwrap() {
+            return Err("location more than the image length".into());
+        }
         self.image_data.insert(location as usize, pixel);
 
         Ok(())

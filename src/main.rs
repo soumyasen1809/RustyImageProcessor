@@ -18,8 +18,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let image_read = image_reader(path);
     let transform_operations = vec![
-        TransformationOperations::FLIPVERTICAL,
-        // TransformationOperations::FLIPHORIZONTAL,
+        // TransformationOperations::FLIPVERTICAL,
+        TransformationOperations::FLIPHORIZONTAL,
         TransformationOperations::FLIP90LEFT,
         // TransformationOperations::FLIP90RIGHT,
     ];
@@ -31,7 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ResizingOperations::RESIZEBILINEAR,
     ];
     let resized_image =
-        ResizingOperations::chain_operations(&flipped_image, resize_operations, 64, 64);
+        ResizingOperations::chain_operations(&flipped_image, resize_operations, 128, 128);
     let out_path = "assets/out_cropped.png";
     let image_write = image_writer(&out_path, &resized_image);
 

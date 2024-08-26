@@ -1,3 +1,5 @@
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
+
 use crate::{
     core::{image::Images, pixel::Pixels},
     transformations::rotate::Transformation,
@@ -30,15 +32,18 @@ impl Transformation for GrayScale {
             }) // Luminosity method: https://www.mathworks.com/help/matlab/ref/rgb2gray.html
             .collect();
 
-        let mut pixels: Vec<Pixels> = Vec::new();
-        for index in 0..self.image.get_image().len() {
-            pixels.push(Pixels::new(
-                *grayscale_pixel.get(index).unwrap(),
-                *grayscale_pixel.get(index).unwrap(),
-                *grayscale_pixel.get(index).unwrap(),
-                (*self.image.get_image().get(index).unwrap()).get_alpha(),
-            ));
-        }
+        let pixels: Vec<Pixels> = (0..self.image.get_image().len())
+            .into_par_iter()
+            .map(|index| {
+                Pixels::new(
+                    *grayscale_pixel.get(index).unwrap(),
+                    *grayscale_pixel.get(index).unwrap(),
+                    *grayscale_pixel.get(index).unwrap(),
+                    (*self.image.get_image().get(index).unwrap()).get_alpha(),
+                )
+            })
+            .collect();
+
         let new_image = Images::new(
             self.image.get_width(),
             self.image.get_height(),

@@ -9,7 +9,7 @@ use image_processing_lib::{
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let path = "assets/Cube.png";
+    let path = "assets/lenna.png";
     let image = ImageReader::open(path)?.decode()?;
 
     println!(

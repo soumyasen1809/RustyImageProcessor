@@ -1,10 +1,7 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processing_lib::{
-    filters::gray_scale::GrayScale,
-    transformations::{
-        resize::ResizingOperations,
-        rotate::{Transformation, TransformationOperations},
-    },
+    filters::gray_scale::FilteringOperations,
+    transformations::{resize::ResizingOperations, rotate::TransformationOperations},
     utils::image_io::{image_reader, image_writer},
 };
 
@@ -22,10 +19,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let image_read = image_reader(path);
     let transform_operations = vec![
-        // TransformationOperations::FLIPVERTICAL,
-        TransformationOperations::FLIPHORIZONTAL,
+        TransformationOperations::FLIPVERTICAL,
+        // TransformationOperations::FLIPHORIZONTAL,
         // TransformationOperations::FLIP90LEFT,
-        // TransformationOperations::FLIP90RIGHT,
+        TransformationOperations::FLIP90RIGHT,
     ];
     let flipped_image =
         TransformationOperations::chain_operations(&image_read.unwrap(), transform_operations);
@@ -35,10 +32,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ResizingOperations::RESIZEBILINEAR,
     ];
     let resized_image =
-        ResizingOperations::chain_operations(&flipped_image, resize_operations, 64, 64);
+        ResizingOperations::chain_operations(&flipped_image, resize_operations, 128, 128);
 
-    let grayscale_operation = GrayScale::new(&resized_image);
-    let grayscale_image = grayscale_operation.apply();
+    let grayscale_operations = vec![
+        FilteringOperations::GrayscaleLuminosity,
+        // FilteringOperations::GrayscaleAverage,
+    ];
+    let grayscale_image =
+        FilteringOperations::chain_operations(&resized_image, grayscale_operations);
 
     let out_path = "assets/out_cropped.png";
     let image_write = image_writer(&out_path, &grayscale_image);

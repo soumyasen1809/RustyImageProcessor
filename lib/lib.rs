@@ -8,6 +8,7 @@ pub mod core {
 pub mod filters {
     pub mod blur;
     pub mod edge_detection;
+    pub mod gray_scale;
     pub mod sharpen;
 }
 

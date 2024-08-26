@@ -46,12 +46,17 @@ pub fn image_writer(
     let rgba_image = image.as_mut_rgba8().unwrap();
     for (index, pixel) in rgba_image.pixels_mut().enumerate() {
         let rgba = &write_image;
-        *pixel = Rgba([
-            rgba.get_image().get(index).unwrap().get_red(),
-            rgba.get_image().get(index).unwrap().get_green(),
-            rgba.get_image().get(index).unwrap().get_blue(),
-            rgba.get_image().get(index).unwrap().get_alpha(),
-        ]);
+        if let Some(pixel_data) = rgba.get_image().get(index) {
+            *pixel = Rgba([
+                pixel_data.get_red(),
+                pixel_data.get_green(),
+                pixel_data.get_blue(),
+                pixel_data.get_alpha(),
+            ]);
+        } else {
+            println!("WARN!: Pixel data not found at index {}", index);
+            *pixel = Rgba([0, 0, 0, 255]); // Default to opaque black if pixel data is missing
+        }
     }
 
     image.save(filepath)?;

@@ -36,10 +36,21 @@ impl Images {
     }
 
     pub fn get_pixel_at(&self, x: u32, y: u32) -> Result<Pixels, Box<dyn std::error::Error>> {
-        let location = y * self.width + x;
-        let pixel = self.image_data.get(location as usize);
+        if x >= self.width || y >= self.height {
+            return Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidInput,
+                "Coordinates out of bounds",
+            )));
+        }
 
-        Ok(pixel.unwrap().clone())
+        let location = y * self.width + x;
+        match self.image_data.get(location as usize) {
+            Some(pixel) => Ok(pixel.clone()),
+            None => Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::NotFound,
+                "Pixel not found",
+            ))),
+        }
     }
 
     pub fn set_pixel_at(

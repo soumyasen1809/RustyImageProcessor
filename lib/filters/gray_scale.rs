@@ -5,15 +5,14 @@ use crate::{
     transformations::rotate::Transformation,
 };
 
-pub enum FilteringOperations {
-    GrayscaleAverage,
-    GrayscaleLuminosity,
-}
-
 #[derive(Clone, Copy)]
 pub enum GrayScaleAlgorithms {
     AVERAGE,
     LUMINOSITY,
+}
+
+pub enum FilteringOperations {
+    GrayScaleAlgorithm(GrayScaleAlgorithms), // Takes GrayscaleAlgorithms as an input
 }
 
 impl FilteringOperations {
@@ -22,11 +21,11 @@ impl FilteringOperations {
 
         for ops in operations.iter() {
             new_image = match ops {
-                FilteringOperations::GrayscaleAverage => {
+                FilteringOperations::GrayScaleAlgorithm(GrayScaleAlgorithms::AVERAGE) => {
                     GrayScale::new(&new_image, GrayScaleAlgorithms::AVERAGE).apply()
                 }
 
-                FilteringOperations::GrayscaleLuminosity => {
+                FilteringOperations::GrayScaleAlgorithm(GrayScaleAlgorithms::LUMINOSITY) => {
                     GrayScale::new(&new_image, GrayScaleAlgorithms::LUMINOSITY).apply()
                 }
             };
@@ -38,9 +37,11 @@ impl FilteringOperations {
 
 fn select_grayscale_algorithm(algo: &GrayScaleAlgorithms, pix: &Pixels) -> u8 {
     match algo {
+        // average grayscale algorithm
         GrayScaleAlgorithms::AVERAGE => (pix.get_red() + pix.get_green() + pix.get_blue()) / 3,
 
         GrayScaleAlgorithms::LUMINOSITY => {
+            // Luminosity method: https://www.mathworks.com/help/matlab/ref/rgb2gray.html
             (((pix.get_red() as f64 * 0.299) as u8)
                 + ((pix.get_green() as f64 * 0.5879) as u8)
                 + (pix.get_blue() as f64 * 0.114) as u8)
@@ -69,8 +70,7 @@ impl Transformation for GrayScale {
             .image
             .get_image()
             .iter()
-            // .map(|pix| (pix.get_red() + pix.get_green() + pix.get_blue()) / 3)   // average grayscale algorithm
-            .map(|pix| select_grayscale_algorithm(&self.algo, pix)) // Luminosity method: https://www.mathworks.com/help/matlab/ref/rgb2gray.html
+            .map(|pix| select_grayscale_algorithm(&self.algo, pix))
             .collect();
 
         let pixels: Vec<Pixels> = (0..self.image.get_image().len())

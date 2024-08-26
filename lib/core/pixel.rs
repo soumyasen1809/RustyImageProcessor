@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Sub};
+use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Debug, Clone)]
 pub struct Pixels {
@@ -35,14 +35,25 @@ impl Pixels {
     }
 }
 
+impl Default for Pixels {
+    fn default() -> Self {
+        Self {
+            red: 0,
+            green: 0,
+            blue: 0,
+            alpha: 255,
+        }
+    }
+}
+
 impl Add for Pixels {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
         Self {
-            red: self.red + rhs.red,
-            green: self.green + rhs.green,
-            blue: self.blue + rhs.blue,
-            alpha: self.alpha + rhs.alpha,
+            red: (self.red + rhs.red).min(255),
+            green: (self.green + rhs.green).min(255),
+            blue: (self.blue + rhs.blue).min(255),
+            alpha: (self.alpha + rhs.alpha).min(255),
         }
     }
 }
@@ -51,10 +62,10 @@ impl Sub for Pixels {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Self {
-            red: self.red - rhs.red,
-            green: self.green - rhs.green,
-            blue: self.blue - rhs.blue,
-            alpha: self.alpha - rhs.alpha,
+            red: (self.red - rhs.red).min(255).max(0),
+            green: (self.green - rhs.green).min(255).max(0),
+            blue: (self.blue - rhs.blue).min(255).max(0),
+            alpha: (self.alpha - rhs.alpha).min(255).max(0),
         }
     }
 }
@@ -63,10 +74,34 @@ impl Mul<f64> for Pixels {
     type Output = Self;
     fn mul(self, rhs: f64) -> Self::Output {
         Self {
-            red: (self.red as f64 * rhs) as u8,
-            green: (self.green as f64 * rhs) as u8,
-            blue: (self.blue as f64 * rhs) as u8,
-            alpha: (self.alpha as f64 * rhs) as u8,
+            red: ((self.red as f64 * rhs) as u8).min(255),
+            green: ((self.green as f64 * rhs) as u8).min(255),
+            blue: ((self.blue as f64 * rhs) as u8).min(255),
+            alpha: ((self.alpha as f64 * rhs) as u8).min(255),
+        }
+    }
+}
+
+impl Mul<u32> for Pixels {
+    type Output = Self;
+    fn mul(self, rhs: u32) -> Self::Output {
+        Self {
+            red: ((self.red as u32 * (rhs as u32)) as u8).min(255),
+            green: ((self.green as u32 * (rhs as u32)) as u8).min(255),
+            blue: ((self.blue as u32 * (rhs as u32)) as u8).min(255),
+            alpha: ((self.alpha as u32 * (rhs as u32)) as u8).min(255),
+        }
+    }
+}
+
+impl Div<u8> for Pixels {
+    type Output = Self;
+    fn div(self, rhs: u8) -> Self::Output {
+        Self {
+            red: ((self.red as u32 / rhs as u32) as u8).min(255),
+            green: ((self.green as u32 / rhs as u32) as u8).min(255),
+            blue: ((self.blue as u32 / rhs as u32) as u8).min(255),
+            alpha: ((self.alpha as u32 / rhs as u32) as u8).min(255),
         }
     }
 }

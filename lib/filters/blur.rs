@@ -3,24 +3,39 @@ use crate::{
     transformations::rotate::Transformation,
 };
 
-pub struct BoxBlur {
-    image: Images,
+#[derive(Clone, Copy)]
+pub enum SmoothingKernelChoice {
+    GAUSSIAN,
+    BOXBLUR,
 }
 
-impl BoxBlur {
-    pub fn new(image: &Images) -> Self {
+pub struct Blur {
+    image: Images,
+    kernel_choice: SmoothingKernelChoice,
+}
+
+impl Blur {
+    pub fn new(image: &Images, kernel_choice: SmoothingKernelChoice) -> Self {
         Self {
             image: image.clone(),
+            kernel_choice,
         }
     }
 }
 
+fn select_smoothing_kernel(choice: SmoothingKernelChoice) -> Vec<u8> {
+    match choice {
+        SmoothingKernelChoice::GAUSSIAN => vec![1, 2, 1, 2, 4, 2, 1, 2, 1], // Gaussian blur kernel for better smoothing
+        SmoothingKernelChoice::BOXBLUR => vec![1, 1, 1, 1, 1, 1, 1, 1, 1],
+    }
+}
+
 // AI: Algorithm from Gemini
-impl Transformation for BoxBlur {
+impl Transformation for Blur {
     fn apply(&self) -> Images {
-        let kernel: Vec<u8> = vec![1, 2, 1, 2, 4, 2, 1, 2, 1]; // Defined kernel: // Gaussian blur kernel for better smoothing
+        let kernel = select_smoothing_kernel(self.kernel_choice);
         let kernel_size: u32 = 3;
-        // let kernel_sum: u32 = kernel.iter().map(|x| *x as u32).sum();
+        // let kernel_sum: u32 = kernel.iter().map(|x| *x as u32).sum();    // Kernel sum normalization gives darker images
         let kernel_max: u32 = *kernel.iter().max().unwrap() as u32;
         let half_kernel_size = kernel_size / 2;
 
@@ -36,6 +51,7 @@ impl Transformation for BoxBlur {
 
         for y in half_kernel_size..self.image.get_height() - half_kernel_size {
             for x in half_kernel_size..self.image.get_width() - half_kernel_size {
+                // Intermediate calculations using sum_r, sum_g, and sum_b to provide more accurate results
                 let mut sum_r = 0;
                 let mut sum_g = 0;
                 let mut sum_b = 0;

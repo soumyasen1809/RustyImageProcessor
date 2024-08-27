@@ -1,7 +1,7 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processing_lib::{
     filters::{
-        blur::BoxBlur,
+        blur::{Blur, SmoothingKernelChoice},
         gray_scale::{FilteringOperations, GrayScaleAlgorithms},
     },
     transformations::{
@@ -47,7 +47,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let grayscale_image =
         FilteringOperations::chain_operations(&resized_image, grayscale_operations);
 
-    let blur_operation = BoxBlur::new(&grayscale_image);
+    let blur_operation = Blur::new(&grayscale_image, SmoothingKernelChoice::GAUSSIAN);
     let box_blur_image = blur_operation.apply();
 
     let out_path = "assets/out_cropped.png";

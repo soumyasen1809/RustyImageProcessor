@@ -6,29 +6,29 @@ use crate::{
 };
 
 #[derive(Clone, Copy)]
-pub enum SmoothingKernelChoice {
+pub enum SmoothingKernelChoices {
     GAUSSIAN,
     BOXBLUR,
 }
 
+fn select_smoothing_kernel(choice: SmoothingKernelChoices) -> Vec<u8> {
+    match choice {
+        SmoothingKernelChoices::GAUSSIAN => vec![1, 2, 1, 2, 4, 2, 1, 2, 1], // Gaussian blur kernel for better smoothing
+        SmoothingKernelChoices::BOXBLUR => vec![1, 1, 1, 1, 1, 1, 1, 1, 1],
+    }
+}
+
 pub struct Blur {
     image: Images,
-    kernel_choice: SmoothingKernelChoice,
+    kernel_choice: SmoothingKernelChoices,
 }
 
 impl Blur {
-    pub fn new(image: &Images, kernel_choice: SmoothingKernelChoice) -> Self {
+    pub fn new(image: &Images, kernel_choice: SmoothingKernelChoices) -> Self {
         Self {
             image: image.clone(),
             kernel_choice,
         }
-    }
-}
-
-fn select_smoothing_kernel(choice: SmoothingKernelChoice) -> Vec<u8> {
-    match choice {
-        SmoothingKernelChoice::GAUSSIAN => vec![1, 2, 1, 2, 4, 2, 1, 2, 1], // Gaussian blur kernel for better smoothing
-        SmoothingKernelChoice::BOXBLUR => vec![1, 1, 1, 1, 1, 1, 1, 1, 1],
     }
 }
 

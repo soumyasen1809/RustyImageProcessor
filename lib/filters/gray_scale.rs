@@ -11,30 +11,6 @@ pub enum GrayScaleAlgorithms {
     LUMINOSITY,
 }
 
-pub enum FilteringOperations {
-    GrayScaleAlgorithm(GrayScaleAlgorithms), // Takes GrayscaleAlgorithms as an input
-}
-
-impl FilteringOperations {
-    pub fn chain_operations(image: &Images, operations: Vec<FilteringOperations>) -> Images {
-        let mut new_image: Images = image.clone();
-
-        for ops in operations.iter() {
-            new_image = match ops {
-                FilteringOperations::GrayScaleAlgorithm(GrayScaleAlgorithms::AVERAGE) => {
-                    GrayScale::new(&new_image, GrayScaleAlgorithms::AVERAGE).apply()
-                }
-
-                FilteringOperations::GrayScaleAlgorithm(GrayScaleAlgorithms::LUMINOSITY) => {
-                    GrayScale::new(&new_image, GrayScaleAlgorithms::LUMINOSITY).apply()
-                }
-            };
-        }
-
-        new_image
-    }
-}
-
 fn select_grayscale_algorithm(algo: &GrayScaleAlgorithms, pix: &Pixels) -> u8 {
     match algo {
         // average grayscale algorithm

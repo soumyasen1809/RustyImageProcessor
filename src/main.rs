@@ -1,13 +1,10 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processing_lib::{
     filters::{
-        blur::{Blur, SmoothingKernelChoice},
-        gray_scale::{FilteringOperations, GrayScaleAlgorithms},
+        blur::SmoothingKernelChoices, filtering_operations::FilteringOperations,
+        gray_scale::GrayScaleAlgorithms,
     },
-    transformations::{
-        resize::ResizingOperations,
-        rotate::{Transformation, TransformationOperations},
-    },
+    transformations::{resize::ResizingOperations, rotate::TransformationOperations},
     utils::image_io::{image_reader, image_writer},
 };
 
@@ -27,7 +24,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let transform_operations = vec![
         // TransformationOperations::FLIPVERTICAL,
         // TransformationOperations::FLIPHORIZONTAL,
-        // TransformationOperations::FLIP90LEFT,
+        TransformationOperations::FLIP90LEFT,
         // TransformationOperations::FLIP90RIGHT,
     ];
     let flipped_image =
@@ -47,11 +44,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let grayscale_image =
         FilteringOperations::chain_operations(&resized_image, grayscale_operations);
 
-    let blur_operation = Blur::new(&grayscale_image, SmoothingKernelChoice::GAUSSIAN);
-    let box_blur_image = blur_operation.apply();
+    let blur_operation = vec![
+        // FilteringOperations::SmoothingKernelChoice(SmoothingKernelChoices::BOXBLUR),
+        FilteringOperations::SmoothingKernelChoice(SmoothingKernelChoices::GAUSSIAN), // Preferred
+    ];
+    let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 
     let out_path = "assets/out_cropped.png";
-    let image_write = image_writer(&out_path, &box_blur_image);
+    let image_write = image_writer(&out_path, &blur_image);
 
     image_write
 }

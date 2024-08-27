@@ -1,3 +1,5 @@
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
+
 use crate::{
     core::{image::Images, pixel::Pixels},
     transformations::rotate::Transformation,
@@ -49,41 +51,49 @@ impl Transformation for Blur {
             Vec::new(),
         );
 
-        for y in half_kernel_size..self.image.get_height() - half_kernel_size {
-            for x in half_kernel_size..self.image.get_width() - half_kernel_size {
-                // Intermediate calculations using sum_r, sum_g, and sum_b to provide more accurate results
-                let mut sum_r = 0;
-                let mut sum_g = 0;
-                let mut sum_b = 0;
+        let new_pixel = (half_kernel_size..self.image.get_height() - half_kernel_size)
+            .into_par_iter()
+            .flat_map(|y_index| {
+                (half_kernel_size..self.image.get_width() - half_kernel_size)
+                    .into_par_iter()
+                    .map(|x_index| {
+                        // Intermediate calculations using sum_r, sum_g, and sum_b to provide more accurate results
+                        let mut sum_r = 0;
+                        let mut sum_g = 0;
+                        let mut sum_b = 0;
 
-                for dy in 0..=half_kernel_size {
-                    for dx in 0..=half_kernel_size {
-                        let pixel = self
-                            .image
-                            .get_pixel_at(
-                                x as u32 + dx - half_kernel_size,
-                                y as u32 + dy - half_kernel_size,
-                            )
-                            .unwrap();
-                        let kernel_val = kernel[(dy * kernel_size + dx) as usize];
-                        sum_r += (pixel.get_red() as u32) * (kernel_val as u32);
-                        sum_g += (pixel.get_green() as u32) * (kernel_val as u32);
-                        sum_b += (pixel.get_blue() as u32) * (kernel_val as u32);
-                    }
-                }
+                        for dy in 0..=half_kernel_size {
+                            for dx in 0..=half_kernel_size {
+                                let pixel = self
+                                    .image
+                                    .get_pixel_at(
+                                        x_index as u32 + dx - half_kernel_size,
+                                        y_index as u32 + dy - half_kernel_size,
+                                    )
+                                    .unwrap();
+                                let kernel_val =
+                                    *kernel.get((dy * kernel_size + dx) as usize).unwrap();
+                                sum_r += (pixel.get_red() as u32) * (kernel_val as u32);
+                                sum_g += (pixel.get_green() as u32) * (kernel_val as u32);
+                                sum_b += (pixel.get_blue() as u32) * (kernel_val as u32);
+                            }
+                        }
 
-                let new_pixel = Pixels::new(
-                    (sum_r / kernel_max) as u8,
-                    (sum_g / kernel_max) as u8,
-                    (sum_b / kernel_max) as u8,
-                    255,
-                );
-                // In the case of box blurring, the goal is to smooth the image, and transparency is not typically involved.
-                // Therefore, setting the alpha to 255 is appropriate.
-                // Changing it to some other value, will create grey white boxes
+                        let new_pixel = Pixels::new(
+                            (sum_r / kernel_max) as u8,
+                            (sum_g / kernel_max) as u8,
+                            (sum_b / kernel_max) as u8,
+                            255,
+                        );
 
-                output_image.add_pixel(new_pixel);
-            }
+                        new_pixel
+                    })
+                    .collect::<Vec<Pixels>>()
+            })
+            .collect::<Vec<Pixels>>();
+
+        for pix in new_pixel.iter() {
+            output_image.add_pixel(pix.clone());
         }
 
         output_image

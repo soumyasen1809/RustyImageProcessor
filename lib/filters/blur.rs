@@ -57,26 +57,39 @@ impl Transformation for Blur {
                 (half_kernel_size..self.image.get_width() - half_kernel_size)
                     .into_par_iter()
                     .map(|x_index| {
+                        let sum_vec: Vec<(u32, u32, u32)> = (0..=half_kernel_size)
+                            .into_par_iter()
+                            .flat_map(|dy| {
+                                (0..=half_kernel_size)
+                                    .into_par_iter()
+                                    .map(|dx| {
+                                        let pixel = self
+                                            .image
+                                            .get_pixel_at(
+                                                x_index as u32 + dx - half_kernel_size,
+                                                y_index as u32 + dy - half_kernel_size,
+                                            )
+                                            .unwrap();
+                                        let kernel_val =
+                                            *kernel.get((dy * kernel_size + dx) as usize).unwrap();
+                                        (
+                                            (pixel.get_red() as u32) * (kernel_val as u32),
+                                            (pixel.get_green() as u32) * (kernel_val as u32),
+                                            (pixel.get_blue() as u32) * (kernel_val as u32),
+                                        )
+                                    })
+                                    .collect::<Vec<(u32, u32, u32)>>()
+                            })
+                            .collect::<Vec<(u32, u32, u32)>>();
+
                         // Intermediate calculations using sum_r, sum_g, and sum_b to provide more accurate results
                         let mut sum_r = 0;
                         let mut sum_g = 0;
                         let mut sum_b = 0;
-
-                        for dy in 0..=half_kernel_size {
-                            for dx in 0..=half_kernel_size {
-                                let pixel = self
-                                    .image
-                                    .get_pixel_at(
-                                        x_index as u32 + dx - half_kernel_size,
-                                        y_index as u32 + dy - half_kernel_size,
-                                    )
-                                    .unwrap();
-                                let kernel_val =
-                                    *kernel.get((dy * kernel_size + dx) as usize).unwrap();
-                                sum_r += (pixel.get_red() as u32) * (kernel_val as u32);
-                                sum_g += (pixel.get_green() as u32) * (kernel_val as u32);
-                                sum_b += (pixel.get_blue() as u32) * (kernel_val as u32);
-                            }
+                        for sum in sum_vec.iter() {
+                            sum_r += sum.0;
+                            sum_g += sum.1;
+                            sum_b += sum.2;
                         }
 
                         let new_pixel = Pixels::new(

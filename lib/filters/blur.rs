@@ -37,8 +37,8 @@ impl Transformation for Blur {
     fn apply(&self) -> Images {
         let kernel = select_smoothing_kernel(self.kernel_choice);
         let kernel_size: u32 = 3;
-        // let kernel_sum: u32 = kernel.iter().map(|x| *x as u32).sum();    // Kernel sum normalization gives darker images
-        let kernel_max: u32 = *kernel.iter().max().unwrap() as u32;
+        let kernel_normalizer: u32 = kernel.iter().map(|x| *x as u32).sum(); // Kernel sum normalization gives darker images
+                                                                             // let kernel_normalizer: u32 = *kernel.iter().max().unwrap() as u32;
         let half_kernel_size = kernel_size / 2;
 
         let output_width = self.image.get_width() - 2 * half_kernel_size;
@@ -93,9 +93,9 @@ impl Transformation for Blur {
                         }
 
                         let new_pixel = Pixels::new(
-                            (sum_r / kernel_max) as u8,
-                            (sum_g / kernel_max) as u8,
-                            (sum_b / kernel_max) as u8,
+                            (sum_r / kernel_normalizer) as u8,
+                            (sum_g / kernel_normalizer) as u8,
+                            (sum_b / kernel_normalizer) as u8,
                             255,
                         );
 

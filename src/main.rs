@@ -4,7 +4,11 @@ use image_processing_lib::{
         blur::SmoothingKernelChoices, filtering_operations::FilteringOperations,
         gray_scale::GrayScaleAlgorithms,
     },
-    transformations::{resize::ResizingOperations, rotate::TransformationOperations},
+    transformations::{
+        crop::Crop,
+        resize::ResizingOperations,
+        rotate::{Transformation, TransformationOperations},
+    },
     utils::image_io::{image_reader, image_writer},
 };
 
@@ -23,8 +27,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let image_read = image_reader(path);
     let transform_operations = vec![
         // TransformationOperations::FLIPVERTICAL,
-        // TransformationOperations::FLIPHORIZONTAL,
-        TransformationOperations::FLIP90LEFT,
+        TransformationOperations::FLIPHORIZONTAL,
+        // TransformationOperations::FLIP90LEFT,
         // TransformationOperations::FLIP90RIGHT,
     ];
     let flipped_image =
@@ -50,8 +54,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ];
     let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 
+    let crop_operation = Crop::new((50, 50), 128, 128, &blur_image);
+    let cropped_image = crop_operation.apply();
+
     let out_path = "assets/out_cropped.png";
-    let image_write = image_writer(&out_path, &blur_image);
+    let image_write = image_writer(&out_path, &cropped_image);
 
     image_write
 }

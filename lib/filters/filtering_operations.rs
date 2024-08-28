@@ -2,6 +2,7 @@ use crate::core::{image::Images, operations::Operation};
 
 use super::{
     blur::{Blur, SmoothingKernelChoices},
+    edge_detection::{EdgeDetectingKernelChoices, EdgeDetection},
     gray_scale::{GrayScale, GrayScaleAlgorithms},
     sharpen::{Sharpen, SharpeningKernelChoices},
 };
@@ -10,6 +11,7 @@ pub enum FilteringOperations {
     GrayScale(GrayScaleAlgorithms), // Takes GrayscaleAlgorithms as an input
     Smoothing(SmoothingKernelChoices),
     Sharpening(SharpeningKernelChoices),
+    EdgeDetecting(EdgeDetectingKernelChoices),
 }
 
 impl FilteringOperations {
@@ -44,6 +46,22 @@ impl FilteringOperations {
 
                 FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement) => {
                     Sharpen::new(&new_image, SharpeningKernelChoices::EdgeEnhancement).apply()
+                }
+
+                FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Outline) => {
+                    EdgeDetection::new(&new_image, EdgeDetectingKernelChoices::Outline).apply()
+                }
+
+                FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelX) => {
+                    EdgeDetection::new(&new_image, EdgeDetectingKernelChoices::SobelX).apply()
+                }
+
+                FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelY) => {
+                    EdgeDetection::new(&new_image, EdgeDetectingKernelChoices::SobelY).apply()
+                }
+
+                FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss) => {
+                    EdgeDetection::new(&new_image, EdgeDetectingKernelChoices::Emboss).apply()
                 }
             };
         }

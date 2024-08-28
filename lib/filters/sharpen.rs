@@ -11,7 +11,7 @@ pub enum SharpeningKernelChoices {
 
 fn select_smoothing_kernel(choice: SharpeningKernelChoices) -> Vec<i32> {
     match choice {
-        SharpeningKernelChoices::Basic => vec![0, -1, 0, -1, 5, -1, 0, -1, 0], // Gaussian blur kernel for better smoothing
+        SharpeningKernelChoices::Basic => vec![0, -1, 0, -1, 5, -1, 0, -1, 0],
         SharpeningKernelChoices::HighPass => vec![-1, -1, -1, -1, 8, -1, -1, -1, -1],
         SharpeningKernelChoices::EdgeEnhancement => vec![-1, -1, -1, -1, 9, -1, -1, -1, -1],
     }

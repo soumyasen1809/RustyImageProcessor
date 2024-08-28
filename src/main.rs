@@ -1,8 +1,9 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processing_lib::{
     filters::{
-        blur::SmoothingKernelChoices, filtering_operations::FilteringOperations,
-        gray_scale::GrayScaleAlgorithms, sharpen::SharpeningKernelChoices,
+        blur::SmoothingKernelChoices, edge_detection::EdgeDetectingKernelChoices,
+        filtering_operations::FilteringOperations, gray_scale::GrayScaleAlgorithms,
+        sharpen::SharpeningKernelChoices,
     },
     transformations::{
         crop::CroppingOperations, resize::ResizingOperations, rotate::RotatingOperations,
@@ -27,7 +28,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let transform_operations = vec![
         TransformationOperations::Rotate(RotatingOperations::RotateVertical),
         // TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),
-        TransformationOperations::Rotate(RotatingOperations::Rotate90Left),
+        // TransformationOperations::Rotate(RotatingOperations::Rotate90Left),
         // TransformationOperations::Rotate(RotatingOperations::Rotate90Right),
     ];
     let flipped_image =
@@ -65,8 +66,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ];
     let sharpened_image = FilteringOperations::chain_operations(&cropped_image, sharpen_operation);
 
+    let edge_detection_operation = vec![
+        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Outline), // Preferred
+        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelX),
+        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelY),
+        FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss),
+    ];
+    let edge_detected_image =
+        FilteringOperations::chain_operations(&sharpened_image, edge_detection_operation);
+
     let out_path = "assets/out_cropped.png";
-    let image_write = image_writer(&out_path, &sharpened_image);
+    let image_write = image_writer(&out_path, &edge_detected_image);
 
     image_write
 }

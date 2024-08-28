@@ -1,12 +1,16 @@
 use crate::core::{image::Images, operations::Operation};
 
-use super::rotate::{Flip90Left, Flip90Right, FlipHorizontal, FlipVertical};
+use super::{
+    resize::{ResizeBilinearInterpolation, ResizeNearestNeighbour, ResizingOperations},
+    rotate::{Flip90Left, Flip90Right, FlipHorizontal, FlipVertical},
+};
 
 pub enum TransformationOperations {
-    FLIPVERTICAL,
-    FLIPHORIZONTAL,
-    FLIP90LEFT,
-    FLIP90RIGHT,
+    RotateVertical,
+    RotateHorizontal,
+    Rotate90Left,
+    Rotate90Right,
+    Resize(ResizingOperations),
 }
 
 impl TransformationOperations {
@@ -15,10 +19,25 @@ impl TransformationOperations {
 
         for ops in operations.iter() {
             new_image = match ops {
-                TransformationOperations::FLIPVERTICAL => FlipVertical::new(&new_image).apply(),
-                TransformationOperations::FLIPHORIZONTAL => FlipHorizontal::new(&new_image).apply(),
-                TransformationOperations::FLIP90LEFT => Flip90Left::new(&new_image).apply(),
-                TransformationOperations::FLIP90RIGHT => Flip90Right::new(&new_image).apply(),
+                TransformationOperations::RotateVertical => FlipVertical::new(&new_image).apply(),
+
+                TransformationOperations::RotateHorizontal => {
+                    FlipHorizontal::new(&new_image).apply()
+                }
+
+                TransformationOperations::Rotate90Left => Flip90Left::new(&new_image).apply(),
+
+                TransformationOperations::Rotate90Right => Flip90Right::new(&new_image).apply(),
+
+                TransformationOperations::Resize(ResizingOperations::BilinearInterpolation(
+                    new_width,
+                    new_height,
+                )) => ResizeBilinearInterpolation::new(*new_width, *new_height, &new_image).apply(),
+
+                TransformationOperations::Resize(ResizingOperations::NearestNeighbours(
+                    new_width,
+                    new_height,
+                )) => ResizeNearestNeighbour::new(*new_width, *new_height, &new_image).apply(),
             };
         }
 

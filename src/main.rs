@@ -25,31 +25,31 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let image_read = image_reader(path);
     let transform_operations = vec![
-        // TransformationOperations::FLIPVERTICAL,
-        TransformationOperations::FLIPHORIZONTAL,
-        // TransformationOperations::FLIP90LEFT,
-        // TransformationOperations::FLIP90RIGHT,
+        TransformationOperations::RotateVertical,
+        // TransformationOperations::RotateHorizontal,
+        TransformationOperations::Rotate90Left,
+        // TransformationOperations::Rotate90Right,
     ];
     let flipped_image =
         TransformationOperations::chain_operations(&image_read.unwrap(), transform_operations);
 
     let resize_operations = vec![
-        // ResizingOperations::RESIZENEARESTNEIGHBOUR,
-        ResizingOperations::RESIZEBILINEAR, // Preferred
+        // TransformationOperations::Resize(ResizingOperations::NearestNeighbours(256, 256)),
+        TransformationOperations::Resize(ResizingOperations::BilinearInterpolation(256, 256)), // Preferred
     ];
     let resized_image =
-        ResizingOperations::chain_operations(&flipped_image, resize_operations, 256, 256);
+        TransformationOperations::chain_operations(&flipped_image, resize_operations);
 
     let grayscale_operations = vec![
-        // FilteringOperations::GrayScaleAlgorithm(GrayScaleAlgorithms::AVERAGE),
-        FilteringOperations::GrayScaleAlgorithm(GrayScaleAlgorithms::LUMINOSITY), // Preferred
+        // FilteringOperations::GrayScale(GrayScaleAlgorithms::AVERAGE),
+        FilteringOperations::GrayScale(GrayScaleAlgorithms::LUMINOSITY), // Preferred
     ];
     let grayscale_image =
         FilteringOperations::chain_operations(&resized_image, grayscale_operations);
 
     let blur_operation = vec![
-        // FilteringOperations::SmoothingKernelChoice(SmoothingKernelChoices::BOXBLUR),
-        FilteringOperations::SmoothingKernelChoice(SmoothingKernelChoices::GAUSSIAN), // Preferred
+        // FilteringOperations::Smoothing(SmoothingKernelChoices::BOXBLUR),
+        FilteringOperations::Smoothing(SmoothingKernelChoices::GAUSSIAN), // Preferred
     ];
     let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 

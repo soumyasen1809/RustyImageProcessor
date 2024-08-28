@@ -6,8 +6,8 @@ use super::{
 };
 
 pub enum FilteringOperations {
-    GrayScaleAlgorithm(GrayScaleAlgorithms), // Takes GrayscaleAlgorithms as an input
-    SmoothingKernelChoice(SmoothingKernelChoices),
+    GrayScale(GrayScaleAlgorithms), // Takes GrayscaleAlgorithms as an input
+    Smoothing(SmoothingKernelChoices),
 }
 
 impl FilteringOperations {
@@ -16,19 +16,19 @@ impl FilteringOperations {
 
         for ops in operations.iter() {
             new_image = match ops {
-                FilteringOperations::GrayScaleAlgorithm(GrayScaleAlgorithms::AVERAGE) => {
+                FilteringOperations::GrayScale(GrayScaleAlgorithms::AVERAGE) => {
                     GrayScale::new(&new_image, GrayScaleAlgorithms::AVERAGE).apply()
                 }
 
-                FilteringOperations::GrayScaleAlgorithm(GrayScaleAlgorithms::LUMINOSITY) => {
+                FilteringOperations::GrayScale(GrayScaleAlgorithms::LUMINOSITY) => {
                     GrayScale::new(&new_image, GrayScaleAlgorithms::LUMINOSITY).apply()
                 }
 
-                FilteringOperations::SmoothingKernelChoice(SmoothingKernelChoices::BOXBLUR) => {
+                FilteringOperations::Smoothing(SmoothingKernelChoices::BOXBLUR) => {
                     Blur::new(&new_image, SmoothingKernelChoices::BOXBLUR).apply()
                 }
 
-                FilteringOperations::SmoothingKernelChoice(SmoothingKernelChoices::GAUSSIAN) => {
+                FilteringOperations::Smoothing(SmoothingKernelChoices::GAUSSIAN) => {
                     Blur::new(&new_image, SmoothingKernelChoices::GAUSSIAN).apply()
                 }
             };

@@ -3,26 +3,21 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 pub enum ResizingOperations {
-    RESIZENEARESTNEIGHBOUR,
-    RESIZEBILINEAR,
+    NearestNeighbours(u32, u32),
+    BilinearInterpolation(u32, u32),
 }
 
 impl ResizingOperations {
-    pub fn chain_operations(
-        image: &Images,
-        operations: Vec<ResizingOperations>,
-        new_width: u32,
-        new_height: u32,
-    ) -> Images {
+    pub fn chain_operations(image: &Images, operations: Vec<ResizingOperations>) -> Images {
         let mut new_image: Images = image.clone();
 
         for ops in operations.iter() {
             new_image = match ops {
-                ResizingOperations::RESIZENEARESTNEIGHBOUR => {
-                    ResizeNearestNeighbour::new(new_width, new_height, &new_image).apply()
+                ResizingOperations::NearestNeighbours(new_width, new_height) => {
+                    ResizeNearestNeighbour::new(*new_width, *new_height, &new_image).apply()
                 }
-                ResizingOperations::RESIZEBILINEAR => {
-                    ResizeBilinearInterpolation::new(new_width, new_height, &new_image).apply()
+                ResizingOperations::BilinearInterpolation(new_width, new_height) => {
+                    ResizeBilinearInterpolation::new(*new_width, *new_height, &new_image).apply()
                 }
             };
         }

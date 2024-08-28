@@ -6,7 +6,7 @@ use crate::core::{image::Images, pixel::Pixels};
 pub fn image_reader(filepath: &str) -> Result<Images, Box<dyn std::error::Error>> {
     let read_image = image::ImageReader::open(filepath)?.decode()?;
 
-    println!("Starting to read image from {:?} . . .", filepath);
+    println!("INFO: Starting to read image from {:?} . . .", filepath);
     let mut image_bytes: Vec<Pixels> = Vec::new();
 
     let read_pixels = (0..read_image.height())
@@ -37,7 +37,7 @@ pub fn image_reader(filepath: &str) -> Result<Images, Box<dyn std::error::Error>
         read_image.color().channel_count(),
         image_bytes,
     );
-    println!("Read image from {:?}", filepath);
+    println!("INFO: Read image from {:?}", filepath);
 
     Ok(image)
 }
@@ -49,27 +49,23 @@ pub fn image_writer(
     let mut image: image::DynamicImage =
         image::DynamicImage::new_rgba8(write_image.get_width(), write_image.get_height());
 
-    println!("Starting to write image to {:?} . . .", filepath);
+    println!("INFO: Starting to write image to {:?} . . .", filepath);
     let rgba_image = image.as_mut_rgba8().unwrap();
-    for (index, pixel) in rgba_image.pixels_mut().enumerate() {
-        let rgba = &write_image;
-        if let Some(pixel_data) = rgba.get_image().get(index) {
+    rgba_image
+        .enumerate_pixels_mut()
+        .for_each(|(x_index, y_index, pixel)| {
+            let rgba = &write_image;
+            let pixel_data = rgba.get_pixel_at(x_index, y_index).unwrap();
             *pixel = Rgba([
                 pixel_data.get_red(),
                 pixel_data.get_green(),
                 pixel_data.get_blue(),
                 pixel_data.get_alpha(),
             ]);
-        } else {
-            return Err(Box::new(std::io::Error::new(
-                std::io::ErrorKind::InvalidData,
-                format!("Pixel data not found at index: {:?}", index),
-            )));
-        }
-    }
+        });
 
     image.save(filepath)?;
-    println!("Saved image to {:?}", filepath);
+    println!("INFO: Saved image to {:?}", filepath);
 
     Ok(())
 }

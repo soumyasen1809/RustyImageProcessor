@@ -55,7 +55,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 
     let crop_operation = vec![TransformationOperations::Crop(
-        CroppingOperations::SimpleCrop((10, 10), 400, 400),
+        CroppingOperations::SimpleCrop((10, 10), 256, 256),
     )];
     let cropped_image = TransformationOperations::chain_operations(&blur_image, crop_operation);
 

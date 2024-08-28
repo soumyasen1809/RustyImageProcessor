@@ -1,4 +1,4 @@
-use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use rayon::iter::{IntoParallelIterator, IntoParallelRefIterator, ParallelIterator};
 
 use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
@@ -42,7 +42,7 @@ impl Operation for GrayScale {
         let grayscale_pixel: Vec<u8> = self
             .image
             .get_image()
-            .iter()
+            .par_iter()
             .map(|pix| select_grayscale_algorithm(&self.algo, pix))
             .collect();
 

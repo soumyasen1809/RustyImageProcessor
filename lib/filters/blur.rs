@@ -90,9 +90,9 @@ impl Operation for Blur {
                         }
 
                         let new_pixel = Pixels::new(
-                            (sum_r / kernel_normalizer) as u8,
-                            (sum_g / kernel_normalizer) as u8,
-                            (sum_b / kernel_normalizer) as u8,
+                            (sum_r / kernel_normalizer).clamp(0, 255) as u8,
+                            (sum_g / kernel_normalizer).clamp(0, 255) as u8,
+                            (sum_b / kernel_normalizer).clamp(0, 255) as u8,
                             255,
                         );
 

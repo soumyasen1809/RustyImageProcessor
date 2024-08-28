@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let image = ImageReader::open(path)?.decode()?;
 
     println!(
-        "image is: {:?}",
+        "Last pixel in image is: {:?}",
         image
             .get_pixel(image.width() - 1, image.height() - 1)
             .channels()
@@ -26,8 +26,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let image_read = image_reader(path);
     let transform_operations = vec![
-        // TransformationOperations::Rotate(RotatingOperations::RotateVertical),
-        TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),
+        TransformationOperations::Rotate(RotatingOperations::RotateVertical),
+        // TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),
         // TransformationOperations::Rotate(RotatingOperations::Rotate90Left),
         // TransformationOperations::Rotate(RotatingOperations::Rotate90Right),
     ];
@@ -36,7 +36,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let resize_operations = vec![
         // TransformationOperations::Resize(ResizingOperations::NearestNeighbours(256, 256)),
-        TransformationOperations::Resize(ResizingOperations::BilinearInterpolation(256, 256)), // Preferred
+        TransformationOperations::Resize(ResizingOperations::BilinearInterpolation(512, 512)), // Preferred
     ];
     let resized_image =
         TransformationOperations::chain_operations(&flipped_image, resize_operations);
@@ -55,7 +55,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 
     let crop_operation = vec![TransformationOperations::Crop(
-        CroppingOperations::SimpleCrop((1, 1), 200, 200),
+        CroppingOperations::SimpleCrop((10, 10), 400, 400),
     )];
     let cropped_image = TransformationOperations::chain_operations(&blur_image, crop_operation);
 
@@ -63,11 +63,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Ideally, use either sharpening or edge detection
         // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Outline), // Preferred for EdgeDetecting
         // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelX),
-        FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelY),
-        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss),
-        // FilteringOperations::Sharpening(SharpeningKernelChoices::Basic),
+        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelY),
+        FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss),
+        FilteringOperations::Sharpening(SharpeningKernelChoices::Basic),
         // FilteringOperations::Sharpening(SharpeningKernelChoices::HighPass),
-        FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement), // Preferred for Sharpening
+        // FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement), // Preferred for Sharpening
     ];
     let edge_detected_image =
         FilteringOperations::chain_operations(&cropped_image, edge_detection_operation);

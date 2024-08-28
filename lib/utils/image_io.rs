@@ -1,4 +1,5 @@
 use image::{GenericImageView, Pixel, Rgba};
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::core::{image::Images, pixel::Pixels};
 
@@ -7,21 +8,27 @@ pub fn image_reader(filepath: &str) -> Result<Images, Box<dyn std::error::Error>
 
     println!("Starting to read image from {:?} . . .", filepath);
     let mut image_bytes: Vec<Pixels> = Vec::new();
-    for h_index in 0..read_image.height() {
-        // read column then row
-        for w_index in 0..read_image.width() {
-            let pixel = read_image.get_pixel(w_index, h_index).to_rgba();
-            let r = pixel.channels().get(0);
-            let g = pixel.channels().get(1);
-            let b = pixel.channels().get(2);
-            let a = pixel.channels().get(3);
-            image_bytes.push(Pixels::new(
-                *r.unwrap(),
-                *g.unwrap(),
-                *b.unwrap(),
-                *a.unwrap(),
-            ));
-        }
+
+    let read_pixels = (0..read_image.height())
+        .into_par_iter()
+        .flat_map(|h_index| {
+            (0..read_image.width())
+                .into_par_iter()
+                .map(|w_index| {
+                    let pixel = read_image.get_pixel(w_index, h_index).to_rgba();
+                    Pixels::new(
+                        *pixel.channels().get(0).unwrap(),
+                        *pixel.channels().get(1).unwrap(),
+                        *pixel.channels().get(2).unwrap(),
+                        *pixel.channels().get(3).unwrap(),
+                    )
+                })
+                .collect::<Vec<Pixels>>()
+        })
+        .collect::<Vec<Pixels>>();
+
+    for pix in read_pixels.iter() {
+        image_bytes.push(pix.clone());
     }
 
     let image = Images::new(
@@ -54,8 +61,10 @@ pub fn image_writer(
                 pixel_data.get_alpha(),
             ]);
         } else {
-            println!("WARN!: Pixel data not found at index {}", index);
-            *pixel = Rgba([0, 0, 0, 255]); // Default to opaque black if pixel data is missing
+            return Err(Box::new(std::io::Error::new(
+                std::io::ErrorKind::InvalidData,
+                format!("Pixel data not found at index: {:?}", index),
+            )));
         }
     }
 

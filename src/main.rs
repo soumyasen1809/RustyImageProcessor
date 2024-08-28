@@ -1,9 +1,8 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processing_lib::{
-    core::operations::Operation,
     filters::{
         blur::SmoothingKernelChoices, filtering_operations::FilteringOperations,
-        gray_scale::GrayScaleAlgorithms, sharpen::Sharpen,
+        gray_scale::GrayScaleAlgorithms, sharpen::SharpeningKernelChoices,
     },
     transformations::{
         crop::CroppingOperations, resize::ResizingOperations, rotate::RotatingOperations,
@@ -59,8 +58,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )];
     let cropped_image = TransformationOperations::chain_operations(&blur_image, crop_operation);
 
-    let sharpen_operation = Sharpen::new(&cropped_image);
-    let sharpened_image = Sharpen::apply(&sharpen_operation);
+    let sharpen_operation = vec![
+        // FilteringOperations::Sharpening(SharpeningKernelChoices::Basic), // Preferred
+        // FilteringOperations::Sharpening(SharpeningKernelChoices::HighPass),
+        FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement),
+    ];
+    let sharpened_image = FilteringOperations::chain_operations(&cropped_image, sharpen_operation);
 
     let out_path = "assets/out_cropped.png";
     let image_write = image_writer(&out_path, &sharpened_image);

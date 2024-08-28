@@ -3,11 +3,13 @@ use crate::core::{image::Images, operations::Operation};
 use super::{
     blur::{Blur, SmoothingKernelChoices},
     gray_scale::{GrayScale, GrayScaleAlgorithms},
+    sharpen::{Sharpen, SharpeningKernelChoices},
 };
 
 pub enum FilteringOperations {
     GrayScale(GrayScaleAlgorithms), // Takes GrayscaleAlgorithms as an input
     Smoothing(SmoothingKernelChoices),
+    Sharpening(SharpeningKernelChoices),
 }
 
 impl FilteringOperations {
@@ -30,6 +32,18 @@ impl FilteringOperations {
 
                 FilteringOperations::Smoothing(SmoothingKernelChoices::GAUSSIAN) => {
                     Blur::new(&new_image, SmoothingKernelChoices::GAUSSIAN).apply()
+                }
+
+                FilteringOperations::Sharpening(SharpeningKernelChoices::Basic) => {
+                    Sharpen::new(&new_image, SharpeningKernelChoices::Basic).apply()
+                }
+
+                FilteringOperations::Sharpening(SharpeningKernelChoices::HighPass) => {
+                    Sharpen::new(&new_image, SharpeningKernelChoices::HighPass).apply()
+                }
+
+                FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement) => {
+                    Sharpen::new(&new_image, SharpeningKernelChoices::EdgeEnhancement).apply()
                 }
             };
         }

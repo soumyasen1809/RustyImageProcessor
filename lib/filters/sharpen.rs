@@ -2,21 +2,39 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
+#[derive(Clone, Copy)]
+pub enum SharpeningKernelChoices {
+    Basic,
+    HighPass,
+    EdgeEnhancement,
+}
+
+fn select_smoothing_kernel(choice: SharpeningKernelChoices) -> Vec<i32> {
+    match choice {
+        SharpeningKernelChoices::Basic => vec![0, -1, 0, -1, 5, -1, 0, -1, 0], // Gaussian blur kernel for better smoothing
+        SharpeningKernelChoices::HighPass => vec![-1, -1, -1, -1, 8, -1, -1, -1, -1],
+        SharpeningKernelChoices::EdgeEnhancement => vec![-1, -1, -1, -1, 9, -1, -1, -1, -1],
+    }
+}
+
 pub struct Sharpen {
     image: Images,
+    kernel_choice: SharpeningKernelChoices,
 }
 
 impl Sharpen {
-    pub fn new(image: &Images) -> Self {
+    pub fn new(image: &Images, kernel_choice: SharpeningKernelChoices) -> Self {
         Self {
             image: image.clone(),
+            kernel_choice,
         }
     }
 }
 
 impl Operation for Sharpen {
     fn apply(&self) -> Images {
-        let kernel: Vec<i32> = vec![0, -1, 0, -1, 5, -1, 0, -1, 0];
+        let kernel: Vec<i32> = select_smoothing_kernel(self.kernel_choice);
+
         let kernel_size: u32 = 3;
         let half_kernel_size = kernel_size / 2;
 

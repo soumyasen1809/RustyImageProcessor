@@ -4,16 +4,16 @@ use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 #[derive(Clone, Copy)]
 pub enum GrayScaleAlgorithms {
-    AVERAGE,
-    LUMINOSITY,
+    Average,
+    Luminosity,
 }
 
 fn select_grayscale_algorithm(algo: &GrayScaleAlgorithms, pix: &Pixels) -> u8 {
     match algo {
         // average grayscale algorithm
-        GrayScaleAlgorithms::AVERAGE => (pix.get_red() + pix.get_green() + pix.get_blue()) / 3,
+        GrayScaleAlgorithms::Average => (pix.get_red() + pix.get_green() + pix.get_blue()) / 3,
 
-        GrayScaleAlgorithms::LUMINOSITY => {
+        GrayScaleAlgorithms::Luminosity => {
             // Luminosity method: https://www.mathworks.com/help/matlab/ref/rgb2gray.html
             (((pix.get_red() as f64 * 0.299) as u8)
                 + ((pix.get_green() as f64 * 0.5879) as u8)

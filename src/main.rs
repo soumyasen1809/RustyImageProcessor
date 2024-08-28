@@ -41,15 +41,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         TransformationOperations::chain_operations(&flipped_image, resize_operations);
 
     let grayscale_operations = vec![
-        // FilteringOperations::GrayScale(GrayScaleAlgorithms::AVERAGE),
-        FilteringOperations::GrayScale(GrayScaleAlgorithms::LUMINOSITY), // Preferred
+        // FilteringOperations::GrayScale(GrayScaleAlgorithms::Average),
+        FilteringOperations::GrayScale(GrayScaleAlgorithms::Luminosity), // Preferred
     ];
     let grayscale_image =
         FilteringOperations::chain_operations(&resized_image, grayscale_operations);
 
     let blur_operation = vec![
-        // FilteringOperations::Smoothing(SmoothingKernelChoices::BOXBLUR),
-        FilteringOperations::Smoothing(SmoothingKernelChoices::GAUSSIAN), // Preferred
+        // FilteringOperations::Smoothing(SmoothingKernelChoices::BoxBlur),
+        FilteringOperations::Smoothing(SmoothingKernelChoices::Gaussian), // Preferred
     ];
     let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 

@@ -4,14 +4,14 @@ use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 #[derive(Clone, Copy)]
 pub enum SmoothingKernelChoices {
-    GAUSSIAN,
-    BOXBLUR,
+    Gaussian,
+    BoxBlur,
 }
 
 fn select_smoothing_kernel(choice: SmoothingKernelChoices) -> Vec<u8> {
     match choice {
-        SmoothingKernelChoices::GAUSSIAN => vec![1, 2, 1, 2, 4, 2, 1, 2, 1], // Gaussian blur kernel for better smoothing
-        SmoothingKernelChoices::BOXBLUR => vec![1, 1, 1, 1, 1, 1, 1, 1, 1],
+        SmoothingKernelChoices::Gaussian => vec![1, 2, 1, 2, 4, 2, 1, 2, 1], // Gaussian blur kernel for better smoothing
+        SmoothingKernelChoices::BoxBlur => vec![1, 1, 1, 1, 1, 1, 1, 1, 1],
     }
 }
 

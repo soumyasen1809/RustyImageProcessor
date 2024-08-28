@@ -18,20 +18,20 @@ impl FilteringOperations {
 
         for ops in operations.iter() {
             new_image = match ops {
-                FilteringOperations::GrayScale(GrayScaleAlgorithms::AVERAGE) => {
-                    GrayScale::new(&new_image, GrayScaleAlgorithms::AVERAGE).apply()
+                FilteringOperations::GrayScale(GrayScaleAlgorithms::Average) => {
+                    GrayScale::new(&new_image, GrayScaleAlgorithms::Average).apply()
                 }
 
-                FilteringOperations::GrayScale(GrayScaleAlgorithms::LUMINOSITY) => {
-                    GrayScale::new(&new_image, GrayScaleAlgorithms::LUMINOSITY).apply()
+                FilteringOperations::GrayScale(GrayScaleAlgorithms::Luminosity) => {
+                    GrayScale::new(&new_image, GrayScaleAlgorithms::Luminosity).apply()
                 }
 
-                FilteringOperations::Smoothing(SmoothingKernelChoices::BOXBLUR) => {
-                    Blur::new(&new_image, SmoothingKernelChoices::BOXBLUR).apply()
+                FilteringOperations::Smoothing(SmoothingKernelChoices::BoxBlur) => {
+                    Blur::new(&new_image, SmoothingKernelChoices::BoxBlur).apply()
                 }
 
-                FilteringOperations::Smoothing(SmoothingKernelChoices::GAUSSIAN) => {
-                    Blur::new(&new_image, SmoothingKernelChoices::GAUSSIAN).apply()
+                FilteringOperations::Smoothing(SmoothingKernelChoices::Gaussian) => {
+                    Blur::new(&new_image, SmoothingKernelChoices::Gaussian).apply()
                 }
 
                 FilteringOperations::Sharpening(SharpeningKernelChoices::Basic) => {

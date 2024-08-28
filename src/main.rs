@@ -54,7 +54,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ];
     let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 
-    let crop_operation = Crop::new((50, 50), 128, 128, &blur_image);
+    let crop_operation = Crop::new((40, 40), 128, 128, &blur_image);
     let cropped_image = crop_operation.apply();
 
     let out_path = "assets/out_cropped.png";

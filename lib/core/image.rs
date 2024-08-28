@@ -39,7 +39,7 @@ impl Images {
         if x >= self.width || y >= self.height {
             return Err(Box::new(std::io::Error::new(
                 std::io::ErrorKind::InvalidInput,
-                "Coordinates out of bounds",
+                format!("Coordinates out of bounds for x:{:?} and y {:?}", x, y),
             )));
         }
 

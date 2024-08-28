@@ -2,6 +2,7 @@
 
 pub mod core {
     pub mod image;
+    pub mod operations;
     pub mod pixel;
 }
 
@@ -17,6 +18,7 @@ pub mod transformations {
     pub mod crop;
     pub mod resize;
     pub mod rotate;
+    pub mod transformation_operations;
 }
 
 pub mod utils {

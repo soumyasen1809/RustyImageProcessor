@@ -1,13 +1,12 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processing_lib::{
+    core::operations::Operation,
     filters::{
         blur::SmoothingKernelChoices, filtering_operations::FilteringOperations,
         gray_scale::GrayScaleAlgorithms,
     },
     transformations::{
-        crop::Crop,
-        resize::ResizingOperations,
-        rotate::{Transformation, TransformationOperations},
+        crop::Crop, resize::ResizingOperations, transformation_operations::TransformationOperations,
     },
     utils::image_io::{image_reader, image_writer},
 };

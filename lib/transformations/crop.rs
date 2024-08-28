@@ -1,8 +1,6 @@
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-use crate::core::{image::Images, pixel::Pixels};
-
-use super::rotate::Transformation;
+use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 pub struct Crop {
     top_left_point: (u32, u32),
@@ -27,7 +25,7 @@ impl Crop {
     }
 }
 
-impl Transformation for Crop {
+impl Operation for Crop {
     fn apply(&self) -> Images {
         let mut cropped_image = Images::new(
             self.new_width,

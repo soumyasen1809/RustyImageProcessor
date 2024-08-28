@@ -1,9 +1,6 @@
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-use crate::{
-    core::{image::Images, pixel::Pixels},
-    transformations::rotate::Transformation,
-};
+use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 #[derive(Clone, Copy)]
 pub enum SmoothingKernelChoices {
@@ -33,7 +30,7 @@ impl Blur {
 }
 
 // AI: Algorithm from Gemini
-impl Transformation for Blur {
+impl Operation for Blur {
     fn apply(&self) -> Images {
         let kernel = select_smoothing_kernel(self.kernel_choice);
         let kernel_size: u32 = 3;

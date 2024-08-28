@@ -1,7 +1,6 @@
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-use super::rotate::Transformation;
-use crate::core::{image::Images, pixel::Pixels};
+use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 pub enum ResizingOperations {
     RESIZENEARESTNEIGHBOUR,
@@ -48,7 +47,7 @@ impl ResizeNearestNeighbour {
     }
 }
 
-impl Transformation for ResizeNearestNeighbour {
+impl Operation for ResizeNearestNeighbour {
     fn apply(&self) -> Images {
         let mut new_image = Images::new(
             self.new_width,
@@ -101,7 +100,7 @@ impl ResizeBilinearInterpolation {
     }
 }
 
-impl Transformation for ResizeBilinearInterpolation {
+impl Operation for ResizeBilinearInterpolation {
     fn apply(&self) -> Images {
         let mut new_image = Images::new(
             self.new_width,

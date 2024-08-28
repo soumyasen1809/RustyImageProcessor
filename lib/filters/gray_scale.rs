@@ -1,9 +1,6 @@
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-use crate::{
-    core::{image::Images, pixel::Pixels},
-    transformations::rotate::Transformation,
-};
+use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 #[derive(Clone, Copy)]
 pub enum GrayScaleAlgorithms {
@@ -40,7 +37,7 @@ impl GrayScale {
     }
 }
 
-impl Transformation for GrayScale {
+impl Operation for GrayScale {
     fn apply(&self) -> Images {
         let grayscale_pixel: Vec<u8> = self
             .image

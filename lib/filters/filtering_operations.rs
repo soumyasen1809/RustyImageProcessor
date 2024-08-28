@@ -1,4 +1,4 @@
-use crate::{core::image::Images, transformations::rotate::Transformation};
+use crate::core::{image::Images, operations::Operation};
 
 use super::{
     blur::{Blur, SmoothingKernelChoices},

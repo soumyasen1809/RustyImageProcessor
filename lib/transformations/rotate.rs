@@ -1,34 +1,6 @@
 use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, ParallelIterator};
 
-use crate::core::{image::Images, pixel::Pixels};
-
-pub trait Transformation {
-    fn apply(&self) -> Images;
-}
-
-pub enum TransformationOperations {
-    FLIPVERTICAL,
-    FLIPHORIZONTAL,
-    FLIP90LEFT,
-    FLIP90RIGHT,
-}
-
-impl TransformationOperations {
-    pub fn chain_operations(image: &Images, operations: Vec<TransformationOperations>) -> Images {
-        let mut new_image: Images = image.clone();
-
-        for ops in operations.iter() {
-            new_image = match ops {
-                TransformationOperations::FLIPVERTICAL => FlipVertical::new(&new_image).apply(),
-                TransformationOperations::FLIPHORIZONTAL => FlipHorizontal::new(&new_image).apply(),
-                TransformationOperations::FLIP90LEFT => Flip90Left::new(&new_image).apply(),
-                TransformationOperations::FLIP90RIGHT => Flip90Right::new(&new_image).apply(),
-            };
-        }
-
-        new_image
-    }
-}
+use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 pub struct FlipVertical {
     image: Images,
@@ -42,7 +14,7 @@ impl FlipVertical {
     }
 }
 
-impl Transformation for FlipVertical {
+impl Operation for FlipVertical {
     fn apply(&self) -> Images {
         let original_image = self.image.get_image().clone();
 
@@ -89,7 +61,7 @@ impl FlipHorizontal {
     }
 }
 
-impl Transformation for FlipHorizontal {
+impl Operation for FlipHorizontal {
     fn apply(&self) -> Images {
         let original_image = self.image.get_image().clone();
 
@@ -135,7 +107,7 @@ impl Flip90Left {
     }
 }
 
-impl Transformation for Flip90Left {
+impl Operation for Flip90Left {
     fn apply(&self) -> Images {
         let original_image = self.image.get_image().clone();
 
@@ -181,7 +153,7 @@ impl Flip90Right {
     }
 }
 
-impl Transformation for Flip90Right {
+impl Operation for Flip90Right {
     fn apply(&self) -> Images {
         let original_image = self.image.get_image().clone();
 

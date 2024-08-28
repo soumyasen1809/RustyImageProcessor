@@ -37,7 +37,7 @@ pub fn image_reader(filepath: &str) -> Result<Images, Box<dyn std::error::Error>
         read_image.color().channel_count(),
         image_bytes,
     );
-    println!("INFO: Read image from {:?}", filepath);
+    println!("INFO: Finished reading image from {:?}", filepath);
 
     Ok(image)
 }

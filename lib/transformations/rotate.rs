@@ -2,6 +2,13 @@ use rayon::iter::{IndexedParallelIterator, IntoParallelIterator, ParallelIterato
 
 use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
+pub enum RotatingOperations {
+    RotateVertical,
+    RotateHorizontal,
+    Rotate90Left,
+    Rotate90Right,
+}
+
 pub struct FlipVertical {
     image: Images,
 }

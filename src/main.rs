@@ -1,12 +1,12 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processing_lib::{
-    core::operations::Operation,
     filters::{
         blur::SmoothingKernelChoices, filtering_operations::FilteringOperations,
         gray_scale::GrayScaleAlgorithms,
     },
     transformations::{
-        crop::Crop, resize::ResizingOperations, transformation_operations::TransformationOperations,
+        crop::CroppingOperations, resize::ResizingOperations, rotate::RotatingOperations,
+        transformation_operations::TransformationOperations,
     },
     utils::image_io::{image_reader, image_writer},
 };
@@ -25,10 +25,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let image_read = image_reader(path);
     let transform_operations = vec![
-        TransformationOperations::RotateVertical,
-        // TransformationOperations::RotateHorizontal,
-        TransformationOperations::Rotate90Left,
-        // TransformationOperations::Rotate90Right,
+        TransformationOperations::Rotate(RotatingOperations::RotateVertical),
+        TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),
+        TransformationOperations::Rotate(RotatingOperations::Rotate90Left),
+        TransformationOperations::Rotate(RotatingOperations::Rotate90Right),
     ];
     let flipped_image =
         TransformationOperations::chain_operations(&image_read.unwrap(), transform_operations);
@@ -53,8 +53,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ];
     let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 
-    let crop_operation = Crop::new((40, 40), 128, 128, &blur_image);
-    let cropped_image = crop_operation.apply();
+    let crop_operation = vec![TransformationOperations::Crop(
+        CroppingOperations::SimpleCrop((40, 40), 128, 128),
+    )];
+    let cropped_image = TransformationOperations::chain_operations(&blur_image, crop_operation);
 
     let out_path = "assets/out_cropped.png";
     let image_write = image_writer(&out_path, &cropped_image);

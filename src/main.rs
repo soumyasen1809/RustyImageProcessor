@@ -26,8 +26,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let image_read = image_reader(path);
     let transform_operations = vec![
-        TransformationOperations::Rotate(RotatingOperations::RotateVertical),
-        // TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),
+        // TransformationOperations::Rotate(RotatingOperations::RotateVertical),
+        TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),
         // TransformationOperations::Rotate(RotatingOperations::Rotate90Left),
         // TransformationOperations::Rotate(RotatingOperations::Rotate90Right),
     ];
@@ -55,25 +55,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 
     let crop_operation = vec![TransformationOperations::Crop(
-        CroppingOperations::SimpleCrop((50, 50), 128, 128),
+        CroppingOperations::SimpleCrop((1, 1), 200, 200),
     )];
     let cropped_image = TransformationOperations::chain_operations(&blur_image, crop_operation);
 
-    let sharpen_operation = vec![
-        // FilteringOperations::Sharpening(SharpeningKernelChoices::Basic), // Preferred
-        // FilteringOperations::Sharpening(SharpeningKernelChoices::HighPass),
-        FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement),
-    ];
-    let sharpened_image = FilteringOperations::chain_operations(&cropped_image, sharpen_operation);
-
     let edge_detection_operation = vec![
-        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Outline), // Preferred
+        // Ideally, use either sharpening or edge detection
+        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Outline), // Preferred for EdgeDetecting
         // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelX),
-        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelY),
-        FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss),
+        FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelY),
+        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss),
+        // FilteringOperations::Sharpening(SharpeningKernelChoices::Basic),
+        // FilteringOperations::Sharpening(SharpeningKernelChoices::HighPass),
+        FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement), // Preferred for Sharpening
     ];
     let edge_detected_image =
-        FilteringOperations::chain_operations(&sharpened_image, edge_detection_operation);
+        FilteringOperations::chain_operations(&cropped_image, edge_detection_operation);
 
     let out_path = "assets/out_cropped.png";
     let image_write = image_writer(&out_path, &edge_detected_image);

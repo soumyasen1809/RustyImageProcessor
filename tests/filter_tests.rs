@@ -5,6 +5,7 @@ mod tests {
         filters::{
             blur::{Blur, SmoothingKernelChoices},
             edge_detection::{EdgeDetectingKernelChoices, EdgeDetection},
+            gray_scale::{GrayScale, GrayScaleAlgorithms},
             sharpen::{Sharpen, SharpeningKernelChoices},
         },
     };
@@ -254,5 +255,23 @@ mod tests {
         let sharpen_image = Sharpen::new(&img, SharpeningKernelChoices::EdgeEnhancement).apply();
         let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
         assert_eq!(sharpen_image, new_image);
+    }
+
+    #[test]
+    fn grayscale_filter_average_test() {
+        let img = Images::new(1, 1, 3, vec![Pixels::new(255, 200, 100, 255)]);
+
+        let gray_image = GrayScale::new(&img, GrayScaleAlgorithms::Average).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(14, 14, 14, 255)]);
+        assert_eq!(gray_image, new_image);
+    }
+
+    #[test]
+    fn grayscale_filter_luminosity_test() {
+        let img = Images::new(1, 1, 3, vec![Pixels::new(255, 200, 100, 255)]);
+
+        let gray_image = GrayScale::new(&img, GrayScaleAlgorithms::Luminosity).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(68, 68, 68, 255)]);
+        assert_eq!(gray_image, new_image);
     }
 }

@@ -8,34 +8,34 @@ It tries to follow a well-structured design that allows for easy extension and c
 
 ```
 
-image_processing/
+image_processor/
 ├── Cargo.toml
 ├── src/
-│   ├── main.rs
-│   └── tests/
-│       ├── image_tests.rs
-│       ├── filter_tests.rs
-│       └── transformation_tests.rs
-└── lib/
-    ├── core/
-    │   ├── image.rs  // Image data structure
-    │   ├── pixel.rs  // Optional pixel manipulation
-    │   └── <...>.rs  // Others
-    ├── filters/
-    │   ├── blur.rs  // Gaussian blur, etc.
-    │   ├── sharpen.rs
-    │   ├── edge_detection.rs  // Canny, Sobel, etc.
-    │   └── <...>.rs  // Others
-    ├── transformations/
-    │   ├── resize.rs
-    │   ├── rotate.rs
-    │   ├── crop.rs
-    │   └── <...>.rs  // Others
-    └── utils/
-        ├── color_space_converter.rs  // RGB, HSV, etc.
-        ├── image_io.rs  // File I/O (loading/saving)
-        ├── image_statistics.rs  // Histogram, etc.
-        └── <...>.rs  // Others
+│   ├── main.rs              // Entry point for the binary
+│   ├── lib.rs               // Main library file
+│   ├── core/
+│   │   ├── image.rs         // Image data structure
+│   │   ├── pixel.rs         // Pixel data structure
+│   │   └── <...>.rs         // Other modules
+│   ├── filters/
+│   │   ├── blur.rs          // Gaussian blur, etc.
+│   │   ├── sharpen.rs
+│   │   ├── edge_detection.rs // Outline, Sobel, etc.
+│   │   └── <...>.rs          // Other modules
+│   ├── transformations/
+│   │   ├── resize.rs
+│   │   ├── rotate.rs         // Flip operations
+│   │   ├── crop.rs
+│   │   └── <...>.rs          // Other modules
+│   └── utils/
+│       ├── color_space_converter.rs // RGB, HSV, etc.
+│       ├── image_io.rs         // File I/O
+│       ├── image_statistics.rs // Histogram, etc.
+│       └── <...>.rs            // Other modules
+└── tests/
+    ├── image_tests.rs          // Integration tests for images
+    ├── filter_tests.rs         // Integration tests for filters
+    └── transformation_tests.rs // Integration tests for transformations
 
 ```
 

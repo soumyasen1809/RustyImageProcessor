@@ -105,3 +105,12 @@ impl Div<u8> for Pixels {
         }
     }
 }
+
+impl PartialEq for Pixels {
+    fn eq(&self, other: &Self) -> bool {
+        self.red == other.red
+            && self.green == other.green
+            && self.blue == other.blue
+            && self.alpha == other.alpha
+    }
+}

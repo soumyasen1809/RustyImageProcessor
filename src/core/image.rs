@@ -72,3 +72,12 @@ impl Images {
         self.image_data.push(pix);
     }
 }
+
+impl PartialEq for Images {
+    fn eq(&self, other: &Self) -> bool {
+        self.width == other.width
+            && self.height == other.height
+            && self.channels == other.channels
+            && self.image_data == other.image_data
+    }
+}

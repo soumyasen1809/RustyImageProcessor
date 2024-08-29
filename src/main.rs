@@ -41,7 +41,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let resize_operations = vec![
         // TransformationOperations::Resize(ResizingOperations::NearestNeighbours(256, 256)),
-        TransformationOperations::Resize(ResizingOperations::BilinearInterpolation(512, 512)), // Preferred
+        TransformationOperations::Resize(ResizingOperations::BilinearInterpolation(256, 256)), // Preferred
     ];
     let resized_image =
         TransformationOperations::chain_operations(&flipped_image, resize_operations);
@@ -60,7 +60,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let blur_image = FilteringOperations::chain_operations(&grayscale_image, blur_operation);
 
     let crop_operation = vec![TransformationOperations::Crop(
-        CroppingOperations::SimpleCrop((10, 10), 256, 256),
+        CroppingOperations::SimpleCrop((50, 50), 128, 128),
     )];
     let cropped_image = TransformationOperations::chain_operations(&blur_image, crop_operation);
 
@@ -77,7 +77,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let edge_detected_image =
         FilteringOperations::chain_operations(&cropped_image, edge_detection_operation);
 
-    let histogram_stats = compute_histogram(&cropped_image);
+    let histogram_stats = compute_histogram(&resized_image);
     print_histogram(histogram_stats);
 
     let variance = compute_variance(&resized_image);

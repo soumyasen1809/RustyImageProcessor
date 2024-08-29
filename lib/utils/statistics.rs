@@ -25,6 +25,12 @@ pub fn compute_histogram(image: &Images) -> Vec<HashMap<u8, u32>> {
     let mut green_histogram_map: HashMap<u8, u32> = HashMap::new();
     let mut blue_histogram_map: HashMap<u8, u32> = HashMap::new();
 
+    for index in 0..=255 {
+        red_histogram_map.insert(index, 0);
+        green_histogram_map.insert(index, 0);
+        blue_histogram_map.insert(index, 0);
+    }
+
     for pix in image.get_image().iter() {
         let red_channel = pix.get_red();
         let green_channel = pix.get_green();

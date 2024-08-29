@@ -1,6 +1,11 @@
 # Image Processing Library
 
 ## Overview
+Implementation of common image processing algorithms optimized for performance using the `Rayon` library.
+The library focuses on modifying images, such as resizing, cropping, rotating, filtering, or applying effects.
+It supports various image formats like JPEG, PNG.
+It tries to follow a well-structured design that allows for easy extension and customization.
+
 ```
 
 image_processing/
@@ -14,19 +19,23 @@ image_processing/
 └── lib/
     ├── core/
     │   ├── image.rs  // Image data structure
-    │   └── pixel.rs  // Optional pixel manipulation
+    │   |── pixel.rs  // Optional pixel manipulation
+    │   └── <...>.rs  // Others
     ├── filters/
     │   ├── blur.rs  // Gaussian blur, etc.
     │   ├── sharpen.rs
-    │   └── edge_detection.rs  // Canny, Sobel, etc.
+    │   |── edge_detection.rs  // Canny, Sobel, etc.
+    │   └── <...>.rs  // Others
     ├── transformations/
     │   ├── resize.rs
     │   ├── rotate.rs
-    │   └── crop.rs
+    │   |── crop.rs
+    │   └── <...>.rs  // Others
     └── utils/
         ├── color_space_converter.rs  // RGB, HSV, etc.
         ├── image_io.rs  // File I/O (loading/saving)
-        └── image_statistics.rs  // Histogram, etc.
+        |── image_statistics.rs  // Histogram, etc.
+        └── <...>.rs  // Others
 
 ```
 
@@ -45,19 +54,33 @@ image_processing/
 *lib.rs*
 ```rust
 
-pub mod image;
-pub mod pixel;
-pub mod filters;
-pub mod transformations;
-pub mod utils;
+// Inline Module Declarations
 
-pub use image::Image;
-pub use pixel::Pixel;
+pub mod core {
+    pub mod image;
+    pub mod pixel;
+    pub mod ...
+}
 
-// Re-export modules for convenience
-pub use filters::{BlurFilter, SharpenFilter, EdgeDetectionFilter};
-pub use transformations::{ResizeTransformation, RotateTransformation, CropTransformation};
-pub use utils::{ColorSpaceConverter, ImageIO, ImageStatistics};
+pub mod filters {
+    pub mod blur;
+    pub mod edge_detection;
+    pub mod filtering_operations;
+    pub mod ...
+}
+
+pub mod transformations {
+    pub mod crop;
+    pub mod transformation_operations;
+    pub mod ...
+}
+
+pub mod utils {
+    pub mod color_space_converter;
+    pub mod image_io;
+    pub mod ...
+}
+
 
 ```
 
@@ -67,15 +90,18 @@ pub use utils::{ColorSpaceConverter, ImageIO, ImageStatistics};
 use image_processing_lib::Image;
 
 fn main() {
-    // Create an image or load an existing image
-    let mut image = Image::new(200, 200);
+    // Read an existing image
+    let image_read = image_reader(PATH);
 
     // Apply image processing operations
-    image.apply_filter(BlurFilter::new(5));
-    image.resize(100, 100);
+    let transform_operations = vec![
+        TransformationOperations::Rotate(RotatingOperations::RotateVertical),
+    ];
+    let flipped_image =
+        TransformationOperations::chain_operations(&image_read.unwrap(), transform_operations);
 
     // Save the modified image
-    image.save("output.jpg");
+    let image_write = image_writer(&OUT_PATH, &flipped_image);
 }
 
 ```

@@ -25,14 +25,7 @@ impl Operation for FlipVertical {
     fn apply(&self) -> Images {
         let original_image = self.image.get_image().clone();
 
-        let mut flipped_image: Images = Images::new(
-            self.image.get_width(),
-            self.image.get_height(),
-            self.image.get_channels(),
-            Vec::new(),
-        );
-
-        let pixel_list = (0..self.image.get_height())
+        let new_pixel = (0..self.image.get_height())
             .into_par_iter()
             .rev()
             .flat_map(|y_index| {
@@ -48,9 +41,12 @@ impl Operation for FlipVertical {
             })
             .collect::<Vec<Pixels>>();
 
-        for pix in pixel_list.iter() {
-            flipped_image.add_pixel(pix.clone());
-        }
+        let flipped_image: Images = Images::new(
+            self.image.get_width(),
+            self.image.get_height(),
+            self.image.get_channels(),
+            new_pixel.clone(),
+        );
 
         flipped_image
     }
@@ -72,14 +68,7 @@ impl Operation for FlipHorizontal {
     fn apply(&self) -> Images {
         let original_image = self.image.get_image().clone();
 
-        let mut flipped_image: Images = Images::new(
-            self.image.get_width(),
-            self.image.get_height(),
-            self.image.get_channels(),
-            Vec::new(),
-        );
-
-        let pixel_list = (0..self.image.get_height())
+        let new_pixel = (0..self.image.get_height())
             .into_par_iter()
             .flat_map(|y_index| {
                 let mut vec_slice: Vec<Pixels> = Vec::from_iter(
@@ -94,9 +83,12 @@ impl Operation for FlipHorizontal {
             })
             .collect::<Vec<Pixels>>();
 
-        for pix in pixel_list.iter() {
-            flipped_image.add_pixel(pix.clone());
-        }
+        let flipped_image: Images = Images::new(
+            self.image.get_width(),
+            self.image.get_height(),
+            self.image.get_channels(),
+            new_pixel.clone(),
+        );
 
         flipped_image
     }
@@ -118,14 +110,7 @@ impl Operation for Flip90Left {
     fn apply(&self) -> Images {
         let original_image = self.image.get_image().clone();
 
-        let mut flipped_image: Images = Images::new(
-            self.image.get_width(),
-            self.image.get_height(),
-            self.image.get_channels(),
-            Vec::new(),
-        );
-
-        let pixel_list = (0..self.image.get_width())
+        let new_pixel = (0..self.image.get_width())
             .into_par_iter()
             .flat_map(|x_index| {
                 let mut vec_slice: Vec<Pixels> = original_image
@@ -140,9 +125,12 @@ impl Operation for Flip90Left {
             })
             .collect::<Vec<Pixels>>();
 
-        for pix in pixel_list.iter() {
-            flipped_image.add_pixel(pix.clone());
-        }
+        let flipped_image: Images = Images::new(
+            self.image.get_width(),
+            self.image.get_height(),
+            self.image.get_channels(),
+            new_pixel.clone(),
+        );
 
         flipped_image
     }
@@ -164,14 +152,7 @@ impl Operation for Flip90Right {
     fn apply(&self) -> Images {
         let original_image = self.image.get_image().clone();
 
-        let mut flipped_image: Images = Images::new(
-            self.image.get_width(),
-            self.image.get_height(),
-            self.image.get_channels(),
-            Vec::new(),
-        );
-
-        let pixel_list = (0..self.image.get_width())
+        let new_pixel = (0..self.image.get_width())
             .into_par_iter()
             .flat_map(|x_index| {
                 let vec_slice: Vec<Pixels> = original_image
@@ -185,9 +166,12 @@ impl Operation for Flip90Right {
             })
             .collect::<Vec<Pixels>>();
 
-        for pix in pixel_list.iter() {
-            flipped_image.add_pixel(pix.clone());
-        }
+        let flipped_image: Images = Images::new(
+            self.image.get_width(),
+            self.image.get_height(),
+            self.image.get_channels(),
+            new_pixel.clone(),
+        );
 
         flipped_image
     }

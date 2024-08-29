@@ -78,17 +78,10 @@ impl ResizeBilinearInterpolation {
 
 impl Operation for ResizeBilinearInterpolation {
     fn apply(&self) -> Images {
-        let mut new_image = Images::new(
-            self.new_width,
-            self.new_height,
-            self.image.get_channels(),
-            Vec::new(),
-        );
-
         let x_ratio = self.image.get_width() as f64 / self.new_width as f64;
         let y_ratio = self.image.get_height() as f64 / self.new_height as f64;
 
-        let pixel_list = (0..self.new_height)
+        let new_pixel = (0..self.new_height)
             .into_par_iter()
             .flat_map(|y_index| {
                 (0..self.new_width)
@@ -119,9 +112,12 @@ impl Operation for ResizeBilinearInterpolation {
             })
             .collect::<Vec<Pixels>>();
 
-        for pix in pixel_list.iter() {
-            new_image.add_pixel(pix.clone());
-        }
+        let new_image = Images::new(
+            self.new_width,
+            self.new_height,
+            self.image.get_channels(),
+            new_pixel.clone(),
+        );
 
         new_image
     }

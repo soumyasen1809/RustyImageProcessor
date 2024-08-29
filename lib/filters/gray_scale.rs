@@ -46,7 +46,7 @@ impl Operation for GrayScale {
             .map(|pix| select_grayscale_algorithm(&self.algo, pix))
             .collect();
 
-        let pixels: Vec<Pixels> = (0..self.image.get_image().len())
+        let new_pixel: Vec<Pixels> = (0..self.image.get_image().len())
             .into_par_iter()
             .map(|index| {
                 Pixels::new(
@@ -62,7 +62,7 @@ impl Operation for GrayScale {
             self.image.get_width(),
             self.image.get_height(),
             self.image.get_channels(),
-            pixels.clone(),
+            new_pixel.clone(),
         );
 
         return new_image;

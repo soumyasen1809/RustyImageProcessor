@@ -12,9 +12,10 @@ use image_processing_lib::{
     utils::image_io::{image_reader, image_writer},
 };
 
+const PATH: &str = "assets/lenna.png";
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let path = "assets/lenna.png";
-    let image = ImageReader::open(path)?.decode()?;
+    let image = ImageReader::open(PATH)?.decode()?;
 
     println!(
         "Last pixel in image is: {:?}",
@@ -24,7 +25,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .get(2)
     );
 
-    let image_read = image_reader(path);
+    let image_read = image_reader(PATH);
     let transform_operations = vec![
         TransformationOperations::Rotate(RotatingOperations::RotateVertical),
         // TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),

@@ -31,14 +31,7 @@ impl Crop {
 
 impl Operation for Crop {
     fn apply(&self) -> Images {
-        let mut cropped_image = Images::new(
-            self.new_width,
-            self.new_height,
-            self.image.get_channels(),
-            Vec::new(),
-        );
-
-        let new_image = (0..self.new_height as usize)
+        let new_pixel = (0..self.new_height as usize)
             .into_par_iter()
             .flat_map(|y_index| {
                 (0..self.new_width as usize)
@@ -58,9 +51,12 @@ impl Operation for Crop {
             })
             .collect::<Vec<Pixels>>();
 
-        for pix in new_image.iter() {
-            cropped_image.add_pixel(pix.clone());
-        }
+        let cropped_image = Images::new(
+            self.new_width,
+            self.new_height,
+            self.image.get_channels(),
+            new_pixel.clone(),
+        );
 
         cropped_image
     }

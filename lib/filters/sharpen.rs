@@ -41,13 +41,6 @@ impl Operation for Sharpen {
         let output_width = self.image.get_width() - 2 * half_kernel_size;
         let output_height = self.image.get_height() - 2 * half_kernel_size;
 
-        let mut output_image = Images::new(
-            output_width,
-            output_height,
-            self.image.get_channels(),
-            Vec::new(),
-        );
-
         let new_pixel = (half_kernel_size..self.image.get_height() - half_kernel_size)
             .into_par_iter()
             .flat_map(|y_index| {
@@ -105,9 +98,12 @@ impl Operation for Sharpen {
             })
             .collect::<Vec<Pixels>>();
 
-        for pix in new_pixel.iter() {
-            output_image.add_pixel(pix.clone());
-        }
+        let output_image = Images::new(
+            output_width,
+            output_height,
+            self.image.get_channels(),
+            new_pixel.clone(),
+        );
 
         output_image
     }

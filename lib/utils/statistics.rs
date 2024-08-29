@@ -66,8 +66,7 @@ pub fn print_histogram(histogram_map: Vec<HashMap<u8, u32>>) {
     }
 }
 
-pub fn compute_variance(image: &Images) -> (f64, f64, f64, f64) {
-    let mut variance = (0.0, 0.0, 0.0, 0.0);
+pub fn compute_mean(image: &Images) -> (f64, f64, f64, f64) {
     let mut mean = (0.0, 0.0, 0.0, 0.0);
     for pix in image.get_image() {
         mean.0 += pix.get_red() as f64;
@@ -79,6 +78,13 @@ pub fn compute_variance(image: &Images) -> (f64, f64, f64, f64) {
     mean.1 /= image.get_image().len() as f64;
     mean.2 /= image.get_image().len() as f64;
     mean.3 /= image.get_image().len() as f64;
+
+    mean
+}
+
+pub fn compute_variance(image: &Images) -> (f64, f64, f64, f64) {
+    let mut variance = (0.0, 0.0, 0.0, 0.0);
+    let mean = compute_mean(image);
 
     for pix in image.get_image() {
         variance.0 += (pix.get_red() as f64 - mean.0).powi(2);

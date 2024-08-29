@@ -11,7 +11,7 @@ use image_processing_lib::{
     },
     utils::{
         image_io::{image_reader, image_writer},
-        statistics::{compute_histogram, compute_variance, print_histogram},
+        statistics::{compute_histogram, compute_mean, compute_variance, print_histogram},
     },
 };
 
@@ -79,6 +79,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let histogram_stats = compute_histogram(&resized_image);
     print_histogram(histogram_stats);
+
+    let mean = compute_mean(&resized_image);
+    println!("Mean for the resized image: {:?}", mean);
 
     let variance = compute_variance(&resized_image);
     println!("Variance for the resized image: {:?}", variance);

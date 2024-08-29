@@ -24,10 +24,15 @@ impl ChannelFrequency {
 fn sort_and_print_map(input_map: &HashMap<u8, u32>) {
     let mut input_vec: Vec<(&u8, &u32)> = input_map.iter().collect();
     input_vec.sort_by(|a, b| a.0.cmp(&b.0));
+    let max_val = input_vec.iter().max_by(|a, b| a.1.cmp(&b.1)).unwrap().1;
 
     println!("Intensity \t Count");
     for val in input_vec.iter() {
-        println!("{:?} \t -> \t {:?}", val.0, val.1);
+        print!("{:?} \t \t \t ", val.0);
+        for _ in 0..((*val.1 as f64 / *max_val as f64) * 40.0) as usize {
+            print!("█");
+        }
+        print!(" [{:?}]\n", val.1);
     }
 }
 

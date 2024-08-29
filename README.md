@@ -19,22 +19,22 @@ image_processing/
 └── lib/
     ├── core/
     │   ├── image.rs  // Image data structure
-    │   |── pixel.rs  // Optional pixel manipulation
+    │   ├── pixel.rs  // Optional pixel manipulation
     │   └── <...>.rs  // Others
     ├── filters/
     │   ├── blur.rs  // Gaussian blur, etc.
     │   ├── sharpen.rs
-    │   |── edge_detection.rs  // Canny, Sobel, etc.
+    │   ├── edge_detection.rs  // Canny, Sobel, etc.
     │   └── <...>.rs  // Others
     ├── transformations/
     │   ├── resize.rs
     │   ├── rotate.rs
-    │   |── crop.rs
+    │   ├── crop.rs
     │   └── <...>.rs  // Others
     └── utils/
         ├── color_space_converter.rs  // RGB, HSV, etc.
         ├── image_io.rs  // File I/O (loading/saving)
-        |── image_statistics.rs  // Histogram, etc.
+        ├── image_statistics.rs  // Histogram, etc.
         └── <...>.rs  // Others
 
 ```

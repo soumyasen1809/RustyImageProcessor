@@ -129,6 +129,27 @@ When designing classes for an image processing library in Rust, it's essential t
 - ImageIO: Handles reading and writing images to different formats.
 - ImageStatistics: Calculates various image statistics (e.g., mean, variance, histogram).
 
+#### Image Statistics: Histogram
+In an image statistics histogram, we plot the distribution of pixel intensity values.
+Here’s what that typically involves:
+
+- X-Axis (Horizontal): Represents the range of pixel intensity values. For a grayscale image, this ranges from 0 (black) to 255 (white). For a color image, each channel (red, green, blue) will have its own histogram with the same range.
+- Y-Axis (Vertical): Represents the frequency or count of pixels for each intensity value. This shows how many pixels in the image have a particular intensity.
+
+*Example*:
+- Grayscale Image: If you have a grayscale image, the histogram will show how many pixels have each intensity value from 0 to 255.
+- Color Image: For a color image, you typically have three histograms, one for each color channel (red, green, blue).
+
+For example, a distribution like:
+```
+Intensity
+0  |█████
+1  |██████████
+2  |██████████████
+...
+255|█████
+```
+represents the number of pixels with that intensity
 
 <!-- Check: https://github.com/mbrlabs/pixl/tree/master/src/pixl -->
 <!-- https://medium.com/@lahiru.19/a-guide-to-image-processing-from-scratch-7a6a413fb682 -->

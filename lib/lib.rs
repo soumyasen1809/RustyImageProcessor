@@ -24,4 +24,5 @@ pub mod transformations {
 pub mod utils {
     pub mod color_space_converter;
     pub mod image_io;
+    pub mod statistics;
 }

@@ -9,10 +9,14 @@ use image_processing_lib::{
         crop::CroppingOperations, resize::ResizingOperations, rotate::RotatingOperations,
         transformation_operations::TransformationOperations,
     },
-    utils::image_io::{image_reader, image_writer},
+    utils::{
+        image_io::{image_reader, image_writer},
+        statistics::{compute_histogram, print_histogram},
+    },
 };
 
 const PATH: &str = "assets/lenna.png";
+const OUT_PATH: &str = "assets/out_cropped.png";
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let image = ImageReader::open(PATH)?.decode()?;
@@ -73,8 +77,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let edge_detected_image =
         FilteringOperations::chain_operations(&cropped_image, edge_detection_operation);
 
-    let out_path = "assets/out_cropped.png";
-    let image_write = image_writer(&out_path, &edge_detected_image);
+    let histogram_stats = compute_histogram(resized_image);
+    print_histogram(histogram_stats);
+
+    let image_write = image_writer(&OUT_PATH, &edge_detected_image);
 
     image_write
 }

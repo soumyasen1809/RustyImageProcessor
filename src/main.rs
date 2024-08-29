@@ -11,7 +11,7 @@ use image_processing_lib::{
     },
     utils::{
         image_io::{image_reader, image_writer},
-        statistics::{compute_histogram, print_histogram},
+        statistics::{compute_histogram, compute_variance, print_histogram},
     },
 };
 
@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let transform_operations = vec![
         TransformationOperations::Rotate(RotatingOperations::RotateVertical),
         // TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),
-        // TransformationOperations::Rotate(RotatingOperations::Rotate90Left),
+        TransformationOperations::Rotate(RotatingOperations::Rotate90Left),
         // TransformationOperations::Rotate(RotatingOperations::Rotate90Right),
     ];
     let flipped_image =
@@ -66,19 +66,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let edge_detection_operation = vec![
         // Ideally, use either sharpening or edge detection
-        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Outline), // Preferred for EdgeDetecting
+        FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Outline), // Preferred for EdgeDetecting
         // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelX),
         // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::SobelY),
-        FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss),
-        FilteringOperations::Sharpening(SharpeningKernelChoices::Basic),
+        // FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss),
+        // FilteringOperations::Sharpening(SharpeningKernelChoices::Basic),
         // FilteringOperations::Sharpening(SharpeningKernelChoices::HighPass),
-        // FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement), // Preferred for Sharpening
+        FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement), // Preferred for Sharpening
     ];
     let edge_detected_image =
         FilteringOperations::chain_operations(&cropped_image, edge_detection_operation);
 
-    let histogram_stats = compute_histogram(resized_image);
+    let histogram_stats = compute_histogram(&cropped_image);
     print_histogram(histogram_stats);
+
+    let variance = compute_variance(&resized_image);
+    println!("Variance for the resized image: {:?}", variance);
 
     let image_write = image_writer(&OUT_PATH, &edge_detected_image);
 

@@ -2,7 +2,10 @@
 mod tests {
     use image_processor::{
         core::{image::Images, operations::Operation, pixel::Pixels},
-        filters::blur::{Blur, SmoothingKernelChoices},
+        filters::{
+            blur::{Blur, SmoothingKernelChoices},
+            edge_detection::{EdgeDetectingKernelChoices, EdgeDetection},
+        },
     };
 
     #[test]
@@ -78,5 +81,105 @@ mod tests {
         // Assert the result
         let expected_img = Images::new(1, 1, 3, vec![Pixels::new(111, 63, 31, 255)]);
         assert_eq!(blurred_img, expected_img);
+    }
+
+    #[test]
+    fn edge_detection_filter_outline_test() {
+        let img = Images::new(
+            3,
+            3,
+            3,
+            vec![
+                Pixels::new(155, 0, 0, 155),
+                Pixels::new(0, 155, 155, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 155, 0, 155),
+                Pixels::new(0, 155, 0, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 0, 155, 155),
+            ],
+        );
+
+        let edge_detection_image =
+            EdgeDetection::new(&img, EdgeDetectingKernelChoices::Outline).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
+        assert_eq!(edge_detection_image, new_image);
+    }
+
+    #[test]
+    fn edge_detection_filter_sobelx_test() {
+        let img = Images::new(
+            3,
+            3,
+            3,
+            vec![
+                Pixels::new(155, 0, 0, 155),
+                Pixels::new(0, 155, 155, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 155, 0, 155),
+                Pixels::new(0, 155, 0, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 0, 155, 155),
+            ],
+        );
+
+        let edge_detection_image =
+            EdgeDetection::new(&img, EdgeDetectingKernelChoices::Outline).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
+        assert_eq!(edge_detection_image, new_image);
+    }
+
+    #[test]
+    fn edge_detection_filter_sobely_test() {
+        let img = Images::new(
+            3,
+            3,
+            3,
+            vec![
+                Pixels::new(155, 0, 0, 155),
+                Pixels::new(0, 155, 155, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 155, 0, 155),
+                Pixels::new(0, 155, 0, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 0, 155, 155),
+            ],
+        );
+
+        let edge_detection_image =
+            EdgeDetection::new(&img, EdgeDetectingKernelChoices::Outline).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
+        assert_eq!(edge_detection_image, new_image);
+    }
+
+    #[test]
+    fn edge_detection_filter_emboss_test() {
+        let img = Images::new(
+            3,
+            3,
+            3,
+            vec![
+                Pixels::new(155, 0, 0, 155),
+                Pixels::new(0, 155, 155, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 155, 0, 155),
+                Pixels::new(0, 155, 0, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 0, 155, 155),
+            ],
+        );
+
+        let edge_detection_image =
+            EdgeDetection::new(&img, EdgeDetectingKernelChoices::Outline).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
+        assert_eq!(edge_detection_image, new_image);
     }
 }

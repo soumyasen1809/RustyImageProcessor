@@ -259,10 +259,11 @@ mod tests {
 
     #[test]
     fn grayscale_filter_average_test() {
-        let img = Images::new(1, 1, 3, vec![Pixels::new(255, 200, 100, 255)]);
+        let img = Images::new(1, 1, 3, vec![Pixels::new(255, 200, 90, 255)]);
 
         let gray_image = GrayScale::new(&img, GrayScaleAlgorithms::Average).apply();
-        let new_image = Images::new(1, 1, 3, vec![Pixels::new(14, 14, 14, 255)]);
+        println!("{:?}", gray_image);
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(181, 181, 181, 255)]);
         assert_eq!(gray_image, new_image);
     }
 

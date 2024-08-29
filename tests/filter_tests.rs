@@ -5,6 +5,7 @@ mod tests {
         filters::{
             blur::{Blur, SmoothingKernelChoices},
             edge_detection::{EdgeDetectingKernelChoices, EdgeDetection},
+            sharpen::{Sharpen, SharpeningKernelChoices},
         },
     };
 
@@ -117,19 +118,19 @@ mod tests {
             vec![
                 Pixels::new(155, 0, 0, 155),
                 Pixels::new(0, 155, 155, 155),
+                Pixels::new(100, 120, 130, 255),
+                Pixels::new(110, 125, 135, 255),
+                Pixels::new(120, 130, 140, 255),
+                Pixels::new(255, 0, 0, 155),
                 Pixels::new(0, 0, 155, 155),
-                Pixels::new(155, 155, 155, 155),
-                Pixels::new(155, 155, 0, 155),
-                Pixels::new(0, 155, 0, 155),
-                Pixels::new(0, 0, 155, 155),
-                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 0, 255, 155),
                 Pixels::new(155, 0, 155, 155),
             ],
         );
 
         let edge_detection_image =
-            EdgeDetection::new(&img, EdgeDetectingKernelChoices::Outline).apply();
-        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
+            EdgeDetection::new(&img, EdgeDetectingKernelChoices::SobelX).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 0, 0, 255)]);
         assert_eq!(edge_detection_image, new_image);
     }
 
@@ -153,8 +154,8 @@ mod tests {
         );
 
         let edge_detection_image =
-            EdgeDetection::new(&img, EdgeDetectingKernelChoices::Outline).apply();
-        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
+            EdgeDetection::new(&img, EdgeDetectingKernelChoices::SobelY).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 0, 155, 255)]);
         assert_eq!(edge_detection_image, new_image);
     }
 
@@ -178,8 +179,80 @@ mod tests {
         );
 
         let edge_detection_image =
-            EdgeDetection::new(&img, EdgeDetectingKernelChoices::Outline).apply();
-        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
+            EdgeDetection::new(&img, EdgeDetectingKernelChoices::Emboss).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 255, 255)]);
         assert_eq!(edge_detection_image, new_image);
+    }
+
+    #[test]
+    fn sharpen_filter_basic_test() {
+        let img = Images::new(
+            3,
+            3,
+            3,
+            vec![
+                Pixels::new(155, 0, 0, 155),
+                Pixels::new(0, 155, 155, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 155, 0, 155),
+                Pixels::new(0, 155, 0, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 0, 155, 155),
+            ],
+        );
+
+        let sharpen_image = Sharpen::new(&img, SharpeningKernelChoices::Basic).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 155, 0, 255)]);
+        assert_eq!(sharpen_image, new_image);
+    }
+
+    #[test]
+    fn sharpen_filter_highpass_test() {
+        let img = Images::new(
+            3,
+            3,
+            3,
+            vec![
+                Pixels::new(155, 0, 0, 155),
+                Pixels::new(0, 155, 155, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 155, 0, 155),
+                Pixels::new(0, 155, 0, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 0, 155, 155),
+            ],
+        );
+
+        let sharpen_image = Sharpen::new(&img, SharpeningKernelChoices::HighPass).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
+        assert_eq!(sharpen_image, new_image);
+    }
+
+    #[test]
+    fn sharpen_filter_edge_enhancement_test() {
+        let img = Images::new(
+            3,
+            3,
+            3,
+            vec![
+                Pixels::new(155, 0, 0, 155),
+                Pixels::new(0, 155, 155, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 155, 0, 155),
+                Pixels::new(0, 155, 0, 155),
+                Pixels::new(0, 0, 155, 155),
+                Pixels::new(155, 155, 155, 155),
+                Pixels::new(155, 0, 155, 155),
+            ],
+        );
+
+        let sharpen_image = Sharpen::new(&img, SharpeningKernelChoices::EdgeEnhancement).apply();
+        let new_image = Images::new(1, 1, 3, vec![Pixels::new(255, 255, 0, 255)]);
+        assert_eq!(sharpen_image, new_image);
     }
 }

@@ -1,9 +1,11 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processor::{
+    core::operations::Operation,
     filters::{
         blur::SmoothingKernelChoices,
         edge_detection::EdgeDetectingKernelChoices,
         filtering_operations::FilteringOperations,
+        gamma_correction::GammaCorrection,
         gray_scale::GrayScaleAlgorithms,
         morphological::{MorphologicalKernelChoices, MorphologicalOperations},
         sharpen::SharpeningKernelChoices,
@@ -20,6 +22,7 @@ use image_processor::{
 
 const PATH: &str = "assets/lenna.png";
 const OUT_PATH: &str = "assets/out_cropped.png";
+const GAMMA: f64 = 3.2;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let image = ImageReader::open(PATH)?.decode()?;
@@ -112,5 +115,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let morphed_image = FilteringOperations::chain_operations(&resized_image, morphing_operations);
 
-    image_writer(OUT_PATH, &morphed_image)
+    let gamma_image = GammaCorrection::new(&resized_image, GAMMA).apply();
+
+    image_writer(OUT_PATH, &gamma_image)
 }

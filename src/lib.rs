@@ -10,6 +10,7 @@ pub mod filters {
     pub mod blur;
     pub mod edge_detection;
     pub mod filtering_operations;
+    pub mod gamma_correction;
     pub mod gray_scale;
     pub mod morphological;
     pub mod sharpen;

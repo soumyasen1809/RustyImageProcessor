@@ -1,8 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use image_processor::core::pixel::Pixels;
-
-    use super::*;
+    use image_processor::core::{image::Images, pixel::Pixels};
 
     #[test]
     fn pixel_add_test() {
@@ -33,6 +31,26 @@ mod tests {
 
         let pix_computed = pix1 * num;
         let expected_pix = Pixels::new(100, 200, 255, 255);
+
+        assert_eq!(pix_computed, expected_pix);
+    }
+
+    #[test]
+    fn image_get_pixel_at_location_test() {
+        let img = Images::new(
+            2,
+            2,
+            3,
+            vec![
+                Pixels::new(10, 20, 30, 255),
+                Pixels::new(40, 50, 60, 255),
+                Pixels::new(70, 80, 90, 255),
+                Pixels::new(100, 110, 120, 255),
+            ],
+        );
+
+        let pix_computed = img.get_pixel_at(1, 1).unwrap_or(Pixels::default());
+        let expected_pix = Pixels::new(100, 110, 120, 255);
 
         assert_eq!(pix_computed, expected_pix);
     }

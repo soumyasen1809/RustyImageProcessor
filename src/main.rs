@@ -1,8 +1,12 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processor::{
+    core::operations::Operation,
     filters::{
-        blur::SmoothingKernelChoices, edge_detection::EdgeDetectingKernelChoices,
-        filtering_operations::FilteringOperations, gray_scale::GrayScaleAlgorithms,
+        blur::SmoothingKernelChoices,
+        edge_detection::EdgeDetectingKernelChoices,
+        filtering_operations::FilteringOperations,
+        gray_scale::GrayScaleAlgorithms,
+        morphological::{Dilation, Erosion},
         sharpen::SharpeningKernelChoices,
     },
     transformations::{
@@ -34,7 +38,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         TransformationOperations::Rotate(RotatingOperations::RotateVertical),
         // TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),
         // TransformationOperations::Rotate(RotatingOperations::Rotate90Left),
-        TransformationOperations::Rotate(RotatingOperations::Rotate90Right),
+        // TransformationOperations::Rotate(RotatingOperations::Rotate90Right),
     ];
     let flipped_image =
         TransformationOperations::chain_operations(&image_read.unwrap(), transform_operations);
@@ -80,13 +84,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let histogram_stats = compute_histogram(&resized_image);
     print_histogram(histogram_stats);
 
-    let mean = compute_mean(&resized_image);
+    let mean = compute_mean(&edge_detected_image);
     println!("Mean for the resized image: {:?}", mean);
 
-    let variance = compute_variance(&resized_image);
+    let variance = compute_variance(&edge_detected_image);
     println!("Variance for the resized image: {:?}", variance);
 
-    
+    let image_erosion = Erosion::new(&grayscale_image);
+    let eroded_image = image_erosion.apply();
 
-    image_writer(OUT_PATH, &edge_detected_image)
+    let image_dilation = Dilation::new(&grayscale_image);
+    let dilated_image = image_dilation.apply();
+
+    image_writer(OUT_PATH, &dilated_image)
 }

@@ -11,6 +11,7 @@ pub mod filters {
     pub mod edge_detection;
     pub mod filtering_operations;
     pub mod gray_scale;
+    pub mod morphological;
     pub mod sharpen;
 }
 

@@ -1,13 +1,48 @@
 use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
+#[derive(Clone, Copy)]
+pub enum MorphologicalKernelChoices {
+    CrossKernel,
+    DiamondKernel,
+    HorizontalKernel,
+    VerticalKernel,
+    DiagonalKernel,
+    DiagonalKernel2,
+}
+
+fn choose_kernel(kernel: MorphologicalKernelChoices) -> Vec<i32> {
+    match kernel {
+        MorphologicalKernelChoices::CrossKernel => {
+            vec![0, 1, 0, 1, 1, 1, 0, 1, 0]
+        }
+        MorphologicalKernelChoices::DiamondKernel => {
+            vec![0, 1, 0, 1, 1, 1, 0, 1, 0]
+        }
+        MorphologicalKernelChoices::HorizontalKernel => {
+            vec![1, 1, 1, 0, 0, 0, 1, 1, 1]
+        }
+        MorphologicalKernelChoices::VerticalKernel => {
+            vec![1, 0, 1, 1, 0, 1, 1, 0, 1]
+        }
+        MorphologicalKernelChoices::DiagonalKernel => {
+            vec![0, 0, 1, 0, 1, 0, 1, 0, 0]
+        }
+        MorphologicalKernelChoices::DiagonalKernel2 => {
+            vec![1, 0, 0, 0, 1, 0, 0, 0, 1]
+        }
+    }
+}
+
 pub struct Erosion {
     image: Images,
+    kernel_choice: MorphologicalKernelChoices,
 }
 
 impl Erosion {
-    pub fn new(image: &Images) -> Self {
+    pub fn new(image: &Images, kernel_choice: MorphologicalKernelChoices) -> Self {
         Self {
             image: image.clone(),
+            kernel_choice,
         }
     }
 }
@@ -27,12 +62,7 @@ impl Operation for Erosion {
                 .unwrap()
         ];
 
-        let kernel: Vec<i32> = vec![0, 1, 0, 1, 1, 1, 0, 1, 0]; // cross-kernel
-                                                                // vec![0, 1, 0, 1, 1, 1, 0, 1, 0];      // diamond kernel
-                                                                // vec![1, 1, 1, 0, 0, 0, 1, 1, 1];      // horizontal kernel
-                                                                // vec![1, 0, 1, 1, 0, 1, 1, 0, 1];      // vertical kernel
-                                                                // vec![0, 0, 1, 0, 1, 0, 1, 0, 0];      // diagnonal kernel 1
-                                                                // vec![1, 0, 0, 0, 1, 0, 0, 0, 1];      // diagonal kernel 2
+        let kernel: Vec<i32> = choose_kernel(self.kernel_choice);
 
         for y_index in 1..self.image.get_height() - 1 {
             for x_index in 1..self.image.get_width() - 1 {
@@ -68,12 +98,14 @@ impl Operation for Erosion {
 
 pub struct Dilation {
     image: Images,
+    kernel_choice: MorphologicalKernelChoices,
 }
 
 impl Dilation {
-    pub fn new(image: &Images) -> Self {
+    pub fn new(image: &Images, kernel_choice: MorphologicalKernelChoices) -> Self {
         Self {
             image: image.clone(),
+            kernel_choice,
         }
     }
 }
@@ -93,12 +125,7 @@ impl Operation for Dilation {
                 .unwrap()
         ];
 
-        let kernel: Vec<i32> = vec![0, 1, 0, 1, 1, 1, 0, 1, 0]; // cross-kernel
-                                                                // vec![0, 1, 0, 1, 1, 1, 0, 1, 0];      // diamond kernel
-                                                                // vec![1, 1, 1, 0, 0, 0, 1, 1, 1];      // horizontal kernel
-                                                                // vec![1, 0, 1, 1, 0, 1, 1, 0, 1];      // vertical kernel
-                                                                // vec![0, 0, 1, 0, 1, 0, 1, 0, 0];      // diagnonal kernel 1
-                                                                // vec![1, 0, 0, 0, 1, 0, 0, 0, 1];      // diagonal kernel 2
+        let kernel: Vec<i32> = choose_kernel(self.kernel_choice);
 
         for y_index in 1..self.image.get_height() - 1 {
             for x_index in 1..self.image.get_width() - 1 {

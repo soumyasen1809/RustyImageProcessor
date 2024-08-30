@@ -6,7 +6,7 @@ use image_processor::{
         edge_detection::EdgeDetectingKernelChoices,
         filtering_operations::FilteringOperations,
         gray_scale::GrayScaleAlgorithms,
-        morphological::{Dilation, Erosion},
+        morphological::{Dilation, Erosion, MorphologicalKernelChoices},
         sharpen::SharpeningKernelChoices,
     },
     transformations::{
@@ -90,10 +90,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let variance = compute_variance(&edge_detected_image);
     println!("Variance for the resized image: {:?}", variance);
 
-    let image_erosion = Erosion::new(&grayscale_image);
+    let image_erosion = Erosion::new(&resized_image, MorphologicalKernelChoices::VerticalKernel);
     let eroded_image = image_erosion.apply();
 
-    let image_dilation = Dilation::new(&grayscale_image);
+    let image_dilation = Dilation::new(&eroded_image, MorphologicalKernelChoices::HorizontalKernel);
     let dilated_image = image_dilation.apply();
 
     image_writer(OUT_PATH, &dilated_image)

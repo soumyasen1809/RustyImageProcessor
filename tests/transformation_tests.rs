@@ -43,6 +43,10 @@ mod tests {
                 Pixels::new(30, 60, 90, 255), // idx: 10
             ],
         );
+        assert_eq!(
+            cropped_img.get_image().len(),
+            expected_img.get_image().len()
+        );
         assert_eq!(cropped_img, expected_img);
     }
 
@@ -60,10 +64,10 @@ mod tests {
             2,
             3,
             vec![
-                Pixels::new(0, 0, 0, 255),    // idx: 5
-                Pixels::new(6, 12, 18, 255),  // idx: 6
-                Pixels::new(24, 48, 72, 255), // idx: 9
-                Pixels::new(30, 60, 90, 255), // idx: 10
+                Pixels::new(0, 0, 0, 255),
+                Pixels::new(6, 12, 18, 255),
+                Pixels::new(24, 48, 72, 255),
+                Pixels::new(30, 60, 90, 255),
             ],
         );
         assert_eq!(resized_img, expected_img);
@@ -83,10 +87,10 @@ mod tests {
             2,
             3,
             vec![
-                Pixels::new(0, 0, 0, 255),    // idx: 5
-                Pixels::new(6, 12, 18, 255),  // idx: 6
-                Pixels::new(24, 48, 72, 255), // idx: 9
-                Pixels::new(30, 60, 90, 255), // idx: 10
+                Pixels::new(0, 0, 0, 255),
+                Pixels::new(6, 12, 18, 255),
+                Pixels::new(24, 48, 72, 255),
+                Pixels::new(30, 60, 90, 255),
             ],
         );
         assert_eq!(resized_img, expected_img);

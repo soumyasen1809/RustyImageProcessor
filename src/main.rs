@@ -115,7 +115,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let morphed_image = FilteringOperations::chain_operations(&resized_image, morphing_operations);
 
-    let gamma_image = GammaCorrection::new(&resized_image, GAMMA).apply();
+    let gamma_image = GammaCorrection::new(&morphed_image, GAMMA).apply();
 
     image_writer(OUT_PATH, &gamma_image)
 }

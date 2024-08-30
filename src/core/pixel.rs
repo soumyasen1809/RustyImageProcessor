@@ -50,10 +50,10 @@ impl Add for Pixels {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
         Self {
-            red: (self.red + rhs.red).clamp(0, 255),
-            green: (self.green + rhs.green).clamp(0, 255),
-            blue: (self.blue + rhs.blue).clamp(0, 255),
-            alpha: (self.alpha + rhs.alpha).clamp(0, 255),
+            red: ((self.red as f64 + rhs.red as f64) as u8).clamp(0, 255),
+            green: ((self.green as f64 + rhs.green as f64) as u8).clamp(0, 255),
+            blue: ((self.blue as f64 + rhs.blue as f64) as u8).clamp(0, 255),
+            alpha: ((self.alpha as f64 + rhs.alpha as f64) as u8).clamp(0, 255),
         }
     }
 }
@@ -62,10 +62,10 @@ impl Sub for Pixels {
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Self {
-            red: (self.red - rhs.red).clamp(0, 255),
-            green: (self.green - rhs.green).clamp(0, 255),
-            blue: (self.blue - rhs.blue).clamp(0, 255),
-            alpha: (self.alpha - rhs.alpha).clamp(0, 255),
+            red: ((self.red as f64 - rhs.red as f64) as u8).clamp(0, 255),
+            green: ((self.green as f64 - rhs.green as f64) as u8).clamp(0, 255),
+            blue: ((self.blue as f64 - rhs.blue as f64) as u8).clamp(0, 255),
+            alpha: ((self.alpha as f64 - rhs.alpha as f64) as u8).clamp(0, 255),
         }
     }
 }

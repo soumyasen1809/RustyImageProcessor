@@ -1,12 +1,11 @@
 use image::{GenericImageView, ImageReader, Pixel};
 use image_processor::{
-    core::operations::Operation,
     filters::{
         blur::SmoothingKernelChoices,
         edge_detection::EdgeDetectingKernelChoices,
         filtering_operations::FilteringOperations,
         gray_scale::GrayScaleAlgorithms,
-        morphological::{Dilation, Erosion, MorphologicalKernelChoices},
+        morphological::{MorphologicalKernelChoices, MorphologicalOperations},
         sharpen::SharpeningKernelChoices,
     },
     transformations::{
@@ -90,11 +89,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let variance = compute_variance(&edge_detected_image);
     println!("Variance for the resized image: {:?}", variance);
 
-    let image_erosion = Erosion::new(&resized_image, MorphologicalKernelChoices::VerticalKernel);
-    let eroded_image = image_erosion.apply();
+    let morphing_operations = vec![
+        FilteringOperations::Morphological(MorphologicalOperations::Erode(
+            MorphologicalKernelChoices::CrossKernel,
+        )),
+        // FilteringOperations::Morphological(MorphologicalOperations::Erode(
+        //     MorphologicalKernelChoices::HorizontalKernel,
+        // )),
+        // FilteringOperations::Morphological(MorphologicalOperations::Erode(
+        //     MorphologicalKernelChoices::DiagonalKernel,
+        // )),
+        // FilteringOperations::Morphological(MorphologicalOperations::Dialate(
+        //     MorphologicalKernelChoices::VerticalKernel,
+        // )),
+        // FilteringOperations::Morphological(MorphologicalOperations::Dialate(
+        //     MorphologicalKernelChoices::DiamondKernel,
+        // )),
+        FilteringOperations::Morphological(MorphologicalOperations::Dialate(
+            MorphologicalKernelChoices::DiagonalKernel2,
+        )),
+    ];
 
-    let image_dilation = Dilation::new(&eroded_image, MorphologicalKernelChoices::HorizontalKernel);
-    let dilated_image = image_dilation.apply();
+    let morphed_image = FilteringOperations::chain_operations(&resized_image, morphing_operations);
 
-    image_writer(OUT_PATH, &dilated_image)
+    image_writer(OUT_PATH, &morphed_image)
 }

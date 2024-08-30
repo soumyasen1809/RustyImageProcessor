@@ -1,5 +1,10 @@
 use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
+pub enum MorphologicalOperations {
+    Erode(MorphologicalKernelChoices),
+    Dialate(MorphologicalKernelChoices),
+}
+
 #[derive(Clone, Copy)]
 pub enum MorphologicalKernelChoices {
     CrossKernel,

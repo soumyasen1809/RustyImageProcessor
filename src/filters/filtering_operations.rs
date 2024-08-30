@@ -1,9 +1,13 @@
-use crate::core::{image::Images, operations::Operation};
+use crate::{
+    core::{image::Images, operations::Operation},
+    filters::morphological::{Dilation, Erosion},
+};
 
 use super::{
     blur::{Blur, SmoothingKernelChoices},
     edge_detection::{EdgeDetectingKernelChoices, EdgeDetection},
     gray_scale::{GrayScale, GrayScaleAlgorithms},
+    morphological::MorphologicalOperations,
     sharpen::{Sharpen, SharpeningKernelChoices},
 };
 
@@ -12,6 +16,7 @@ pub enum FilteringOperations {
     Smoothing(SmoothingKernelChoices),
     Sharpening(SharpeningKernelChoices),
     EdgeDetecting(EdgeDetectingKernelChoices),
+    Morphological(MorphologicalOperations),
 }
 
 impl FilteringOperations {
@@ -73,6 +78,20 @@ impl FilteringOperations {
                 FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss) => {
                     println!("INFO: Edge detecting in image with Emboss");
                     EdgeDetection::new(&new_image, EdgeDetectingKernelChoices::Emboss).apply()
+                }
+
+                FilteringOperations::Morphological(MorphologicalOperations::Erode(
+                    morphological_kernel_choices,
+                )) => {
+                    println!("INFO: Eroding image");
+                    Erosion::new(&new_image, *morphological_kernel_choices).apply()
+                }
+
+                FilteringOperations::Morphological(MorphologicalOperations::Dialate(
+                    morphological_kernel_choices,
+                )) => {
+                    println!("INFO: Dialating image");
+                    Dilation::new(&new_image, *morphological_kernel_choices).apply()
                 }
             };
         }

@@ -28,7 +28,7 @@ mod tests {
         transformations::{
             crop::Crop,
             resize::{ResizeBilinearInterpolation, ResizeNearestNeighbour},
-            rotate::FlipVertical,
+            rotate::{Flip90Left, Flip90Right, FlipHorizontal, FlipVertical},
         },
     };
 
@@ -125,6 +125,75 @@ mod tests {
                 Pixels::new(6, 12, 18, 255),
                 Pixels::new(3, 6, 9, 255),
                 Pixels::new(0, 0, 0, 255),
+            ],
+        );
+        assert_eq!(resized_img, expected_img);
+    }
+
+    #[test]
+    fn rotate_horizontal_test() {
+        // Create a sample image
+        let img = common_setup_simple();
+
+        // Apply cropping operation
+        let resized_img = FlipHorizontal::new(&img).apply();
+
+        // Assert the result
+        let expected_img = Images::new(
+            2,
+            2,
+            3,
+            vec![
+                Pixels::new(3, 6, 9, 255),
+                Pixels::new(0, 0, 0, 255),
+                Pixels::new(9, 18, 27, 255),
+                Pixels::new(6, 12, 18, 255),
+            ],
+        );
+        assert_eq!(resized_img, expected_img);
+    }
+
+    #[test]
+    fn rotate_left_test() {
+        // Create a sample image
+        let img = common_setup_simple();
+
+        // Apply cropping operation
+        let resized_img = Flip90Left::new(&img).apply();
+
+        // Assert the result
+        let expected_img = Images::new(
+            2,
+            2,
+            3,
+            vec![
+                Pixels::new(6, 12, 18, 255),
+                Pixels::new(0, 0, 0, 255),
+                Pixels::new(9, 18, 27, 255),
+                Pixels::new(3, 6, 9, 255),
+            ],
+        );
+        assert_eq!(resized_img, expected_img);
+    }
+
+    #[test]
+    fn rotate_right_test() {
+        // Create a sample image
+        let img = common_setup_simple();
+
+        // Apply cropping operation
+        let resized_img = Flip90Right::new(&img).apply();
+
+        // Assert the result
+        let expected_img = Images::new(
+            2,
+            2,
+            3,
+            vec![
+                Pixels::new(0, 0, 0, 255),
+                Pixels::new(6, 12, 18, 255),
+                Pixels::new(3, 6, 9, 255),
+                Pixels::new(9, 18, 27, 255),
             ],
         );
         assert_eq!(resized_img, expected_img);

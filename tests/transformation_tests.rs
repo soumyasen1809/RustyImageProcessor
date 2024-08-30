@@ -15,7 +15,10 @@ fn common_steup_simple() -> Images {
 mod tests {
     use image_processor::{
         core::{image::Images, operations::Operation, pixel::Pixels},
-        transformations::crop::Crop,
+        transformations::{
+            crop::Crop,
+            resize::{ResizeBilinearInterpolation, ResizeNearestNeighbour},
+        },
     };
 
     use super::*;
@@ -41,5 +44,51 @@ mod tests {
             ],
         );
         assert_eq!(cropped_img, expected_img);
+    }
+
+    #[test]
+    fn resize_nearest_neighbour_test() {
+        // Create a sample image
+        let img = common_steup_simple();
+
+        // Apply cropping operation
+        let resized_img = ResizeNearestNeighbour::new(2, 2, &img).apply();
+
+        // Assert the result
+        let expected_img = Images::new(
+            2,
+            2,
+            3,
+            vec![
+                Pixels::new(0, 0, 0, 255),    // idx: 5
+                Pixels::new(6, 12, 18, 255),  // idx: 6
+                Pixels::new(24, 48, 72, 255), // idx: 9
+                Pixels::new(30, 60, 90, 255), // idx: 10
+            ],
+        );
+        assert_eq!(resized_img, expected_img);
+    }
+
+    #[test]
+    fn resize_bilinear_interpolation_test() {
+        // Create a sample image
+        let img = common_steup_simple();
+
+        // Apply cropping operation
+        let resized_img = ResizeBilinearInterpolation::new(2, 2, &img).apply();
+
+        // Assert the result
+        let expected_img = Images::new(
+            2,
+            2,
+            3,
+            vec![
+                Pixels::new(0, 0, 0, 255),    // idx: 5
+                Pixels::new(6, 12, 18, 255),  // idx: 6
+                Pixels::new(24, 48, 72, 255), // idx: 9
+                Pixels::new(30, 60, 90, 255), // idx: 10
+            ],
+        );
+        assert_eq!(resized_img, expected_img);
     }
 }

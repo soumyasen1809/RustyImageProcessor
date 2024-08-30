@@ -86,10 +86,10 @@ impl Mul<u32> for Pixels {
     type Output = Self;
     fn mul(self, rhs: u32) -> Self::Output {
         Self {
-            red: ((self.red as u32 * (rhs as u32)) as u8).clamp(0, 255),
-            green: ((self.green as u32 * (rhs as u32)) as u8).clamp(0, 255),
-            blue: ((self.blue as u32 * (rhs as u32)) as u8).clamp(0, 255),
-            alpha: ((self.alpha as u32 * (rhs as u32)) as u8).clamp(0, 255),
+            red: ((self.red as u32 * rhs) as u8).clamp(0, 255),
+            green: ((self.green as u32 * rhs) as u8).clamp(0, 255),
+            blue: ((self.blue as u32 * rhs) as u8).clamp(0, 255),
+            alpha: ((self.alpha as u32 * rhs) as u8).clamp(0, 255),
         }
     }
 }

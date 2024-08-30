@@ -86,7 +86,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let variance = compute_variance(&resized_image);
     println!("Variance for the resized image: {:?}", variance);
 
-    let image_write = image_writer(&OUT_PATH, &edge_detected_image);
+    
 
-    image_write
+    image_writer(OUT_PATH, &edge_detected_image)
 }

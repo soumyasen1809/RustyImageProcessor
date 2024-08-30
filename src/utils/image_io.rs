@@ -17,7 +17,7 @@ pub fn image_reader(filepath: &str) -> Result<Images, Box<dyn std::error::Error>
                 .map(|w_index| {
                     let pixel = read_image.get_pixel(w_index, h_index).to_rgba();
                     Pixels::new(
-                        *pixel.channels().get(0).unwrap(),
+                        *pixel.channels().first().unwrap(),
                         *pixel.channels().get(1).unwrap(),
                         *pixel.channels().get(2).unwrap(),
                         *pixel.channels().get(3).unwrap(),

@@ -49,7 +49,7 @@ mod tests {
             ],
         );
 
-        let pix_computed = img.get_pixel_at(1, 1).unwrap_or(Pixels::default());
+        let pix_computed = img.get_pixel_at(1, 1).unwrap_or_default();
         let expected_pix = Pixels::new(100, 110, 120, 255);
 
         assert_eq!(pix_computed, expected_pix);
@@ -69,7 +69,7 @@ mod tests {
             ],
         );
 
-        let pix_computed = img.get_pixel_at(4, 4).unwrap_or(Pixels::default());
+        let pix_computed = img.get_pixel_at(4, 4).unwrap_or_default();
         let expected_pix = Pixels::new(0, 0, 0, 255);
 
         assert_eq!(pix_computed, expected_pix);

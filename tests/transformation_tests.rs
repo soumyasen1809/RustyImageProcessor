@@ -6,9 +6,9 @@ fn common_setup_complex() -> Images {
     vec_pix.par_iter_mut().enumerate().for_each(|(idx, val)| {
         *val = Pixels::new(idx as u8 * 3, idx as u8 * 6, idx as u8 * 9, 255)
     });
-    let img = Images::new(4, 4, 3, vec_pix);
+    
 
-    img
+    Images::new(4, 4, 3, vec_pix)
 }
 
 fn common_setup_simple() -> Images {
@@ -16,9 +16,9 @@ fn common_setup_simple() -> Images {
     vec_pix.par_iter_mut().enumerate().for_each(|(idx, val)| {
         *val = Pixels::new(idx as u8 * 3, idx as u8 * 6, idx as u8 * 9, 255)
     });
-    let img = Images::new(2, 2, 3, vec_pix);
+    
 
-    img
+    Images::new(2, 2, 3, vec_pix)
 }
 
 #[cfg(test)]

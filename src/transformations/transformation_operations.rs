@@ -63,7 +63,7 @@ impl TransformationOperations {
                         "INFO: Cropping image to size: {:?} X {:?}",
                         new_width, new_height
                     );
-                    Crop::new(*top_left_point, *new_width, *new_height, &image).apply()
+                    Crop::new(*top_left_point, *new_width, *new_height, image).apply()
                 }
             };
         }

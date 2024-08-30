@@ -37,27 +37,27 @@ impl Operation for Crop {
                 (0..self.new_width as usize)
                     .into_par_iter()
                     .map(|x_index| {
-                        let pix = self
+                        
+
+                        self
                             .image
                             .get_pixel_at(
                                 self.top_left_point.0 + x_index as u32,
                                 self.top_left_point.1 + y_index as u32,
                             )
-                            .unwrap();
-
-                        pix
+                            .unwrap()
                     })
                     .collect::<Vec<Pixels>>()
             })
             .collect::<Vec<Pixels>>();
 
-        let cropped_image = Images::new(
+        
+
+        Images::new(
             self.new_width,
             self.new_height,
             self.image.get_channels(),
             new_pixel.clone(),
-        );
-
-        cropped_image
+        )
     }
 }

@@ -56,8 +56,8 @@ impl Operation for Blur {
                                         let pixel = self
                                             .image
                                             .get_pixel_at(
-                                                x_index as u32 + dx - half_kernel_size,
-                                                y_index as u32 + dy - half_kernel_size,
+                                                x_index + dx - half_kernel_size,
+                                                y_index + dy - half_kernel_size,
                                             )
                                             .unwrap();
                                         let kernel_val =
@@ -82,26 +82,26 @@ impl Operation for Blur {
                             sum_b += sum.2;
                         }
 
-                        let new_pixel = Pixels::new(
+                        
+
+                        Pixels::new(
                             (sum_r / kernel_normalizer).clamp(0, 255) as u8,
                             (sum_g / kernel_normalizer).clamp(0, 255) as u8,
                             (sum_b / kernel_normalizer).clamp(0, 255) as u8,
                             255,
-                        );
-
-                        new_pixel
+                        )
                     })
                     .collect::<Vec<Pixels>>()
             })
             .collect::<Vec<Pixels>>();
 
-        let output_image = Images::new(
+        
+
+        Images::new(
             output_width,
             output_height,
             self.image.get_channels(),
             new_pixel.clone(),
-        );
-
-        output_image
+        )
     }
 }

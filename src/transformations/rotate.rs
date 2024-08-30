@@ -37,7 +37,7 @@ impl Operation for FlipVertical {
                 );
 
                 vec_slice.reverse();
-                return vec_slice;
+                vec_slice
             })
             .collect::<Vec<Pixels>>();
 
@@ -79,7 +79,7 @@ impl Operation for FlipHorizontal {
                 );
 
                 vec_slice.reverse();
-                return vec_slice;
+                vec_slice
             })
             .collect::<Vec<Pixels>>();
 
@@ -121,7 +121,7 @@ impl Operation for Flip90Left {
                     .collect();
 
                 vec_slice.reverse();
-                return vec_slice;
+                vec_slice
             })
             .collect::<Vec<Pixels>>();
 
@@ -162,7 +162,7 @@ impl Operation for Flip90Right {
                     .cloned()
                     .collect();
 
-                return vec_slice;
+                vec_slice
             })
             .collect::<Vec<Pixels>>();
 

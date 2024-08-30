@@ -55,13 +55,13 @@ impl Operation for GrayScale {
             })
             .collect::<Vec<Pixels>>();
 
-        let new_image = Images::new(
+        
+
+        Images::new(
             self.image.get_width(),
             self.image.get_height(),
             self.image.get_channels(),
             new_pixel.clone(),
-        );
-
-        return new_image;
+        )
     }
 }

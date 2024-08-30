@@ -1,0 +1,14 @@
+[package]
+name = "image_processor"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+image = "0.25.2"
+rayon = "1.10.0"
+
+# No need to define [lib] explicitly if you're using src/lib.rs
+# as the library's main file
+# [lib]
+# name = "image_processing_lib"
+# path = "lib/lib.rs"

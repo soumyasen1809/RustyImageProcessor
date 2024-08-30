@@ -1,12 +1,22 @@
 use image_processor::core::{image::Images, pixel::Pixels};
 use rayon::iter::{IndexedParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
 
-fn common_steup_simple() -> Images {
+fn common_setup_complex() -> Images {
     let mut vec_pix: Vec<Pixels> = vec![Pixels::new(0, 0, 0, 0); 16];
     vec_pix.par_iter_mut().enumerate().for_each(|(idx, val)| {
         *val = Pixels::new(idx as u8 * 3, idx as u8 * 6, idx as u8 * 9, 255)
     });
     let img = Images::new(4, 4, 3, vec_pix);
+
+    img
+}
+
+fn common_setup_simple() -> Images {
+    let mut vec_pix: Vec<Pixels> = vec![Pixels::new(0, 0, 0, 0); 4];
+    vec_pix.par_iter_mut().enumerate().for_each(|(idx, val)| {
+        *val = Pixels::new(idx as u8 * 3, idx as u8 * 6, idx as u8 * 9, 255)
+    });
+    let img = Images::new(2, 2, 3, vec_pix);
 
     img
 }
@@ -18,6 +28,7 @@ mod tests {
         transformations::{
             crop::Crop,
             resize::{ResizeBilinearInterpolation, ResizeNearestNeighbour},
+            rotate::FlipVertical,
         },
     };
 
@@ -26,7 +37,7 @@ mod tests {
     #[test]
     fn crop_test() {
         // Create a sample image
-        let img = common_steup_simple();
+        let img = common_setup_complex();
 
         // Apply cropping operation
         let cropped_img = Crop::new((1, 1), 2, 2, &img).apply();
@@ -53,7 +64,7 @@ mod tests {
     #[test]
     fn resize_nearest_neighbour_test() {
         // Create a sample image
-        let img = common_steup_simple();
+        let img = common_setup_complex();
 
         // Apply cropping operation
         let resized_img = ResizeNearestNeighbour::new(2, 2, &img).apply();
@@ -76,7 +87,7 @@ mod tests {
     #[test]
     fn resize_bilinear_interpolation_test() {
         // Create a sample image
-        let img = common_steup_simple();
+        let img = common_setup_complex();
 
         // Apply cropping operation
         let resized_img = ResizeBilinearInterpolation::new(2, 2, &img).apply();
@@ -91,6 +102,29 @@ mod tests {
                 Pixels::new(6, 12, 18, 255),
                 Pixels::new(24, 48, 72, 255),
                 Pixels::new(30, 60, 90, 255),
+            ],
+        );
+        assert_eq!(resized_img, expected_img);
+    }
+
+    #[test]
+    fn rotate_vertical_test() {
+        // Create a sample image
+        let img = common_setup_simple();
+
+        // Apply cropping operation
+        let resized_img = FlipVertical::new(&img).apply();
+
+        // Assert the result
+        let expected_img = Images::new(
+            2,
+            2,
+            3,
+            vec![
+                Pixels::new(9, 18, 27, 255),
+                Pixels::new(6, 12, 18, 255),
+                Pixels::new(3, 6, 9, 255),
+                Pixels::new(0, 0, 0, 255),
             ],
         );
         assert_eq!(resized_img, expected_img);

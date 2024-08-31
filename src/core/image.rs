@@ -75,14 +75,12 @@ where
 
 impl<T> PartialEq for Images<T>
 where
-    T: Copy + Clone + From<u8> + std::cmp::PartialEq,
+    T: Copy + Clone + From<u8> + Into<f64> + std::cmp::PartialEq,
 {
     fn eq(&self, other: &Self) -> bool {
         self.width == other.width
             && self.height == other.height
             && self.channels == other.channels
             && self.image_data == other.image_data
-        // && self.image_data.len() == other.image_data.len()
-        // && self.image_data.iter().zip(other.image_data.iter()).all(|(a,b)| *a == *b)
     }
 }

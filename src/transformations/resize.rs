@@ -7,14 +7,20 @@ pub enum ResizingOperations {
     BilinearInterpolation(u32, u32),
 }
 
-pub struct ResizeNearestNeighbour {
+pub struct ResizeNearestNeighbour<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
     new_width: u32,
     new_height: u32,
-    image: Images,
+    image: Images<T>,
 }
 
-impl ResizeNearestNeighbour {
-    pub fn new(new_width: u32, new_height: u32, image: &Images) -> Self {
+impl<T> ResizeNearestNeighbour<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    pub fn new(new_width: u32, new_height: u32, image: &Images<T>) -> Self {
         Self {
             new_width,
             new_height,
@@ -23,8 +29,11 @@ impl ResizeNearestNeighbour {
     }
 }
 
-impl Operation for ResizeNearestNeighbour {
-    fn apply(&self) -> Images {
+impl<T> Operation<T> for ResizeNearestNeighbour<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    fn apply(&self) -> Images<T> {
         let mut new_image = Images::new(
             self.new_width,
             self.new_height,
@@ -48,9 +57,9 @@ impl Operation for ResizeNearestNeighbour {
                             )
                             .unwrap()
                     })
-                    .collect::<Vec<Pixels>>()
+                    .collect::<Vec<Pixels<T>>>()
             })
-            .collect::<Vec<Pixels>>();
+            .collect::<Vec<Pixels<T>>>();
 
         for pix in pixel_list.iter() {
             new_image.add_pixel(pix.clone());
@@ -60,14 +69,20 @@ impl Operation for ResizeNearestNeighbour {
     }
 }
 
-pub struct ResizeBilinearInterpolation {
+pub struct ResizeBilinearInterpolation<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
     new_width: u32,
     new_height: u32,
-    image: Images,
+    image: Images<T>,
 }
 
-impl ResizeBilinearInterpolation {
-    pub fn new(new_width: u32, new_height: u32, image: &Images) -> Self {
+impl<T> ResizeBilinearInterpolation<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    pub fn new(new_width: u32, new_height: u32, image: &Images<T>) -> Self {
         Self {
             new_width,
             new_height,
@@ -76,8 +91,11 @@ impl ResizeBilinearInterpolation {
     }
 }
 
-impl Operation for ResizeBilinearInterpolation {
-    fn apply(&self) -> Images {
+impl<T> Operation<T> for ResizeBilinearInterpolation<T>
+where
+    T: Copy + Clone + From<u8> + Into<f64> + std::cmp::PartialEq + Send + Sync,
+{
+    fn apply(&self) -> Images<T> {
         let x_ratio = self.image.get_width() as f64 / self.new_width as f64;
         let y_ratio = self.image.get_height() as f64 / self.new_height as f64;
 
@@ -96,19 +114,20 @@ impl Operation for ResizeBilinearInterpolation {
                         let y_diff =
                             (y_index as f64 * y_ratio) - ((y_index as f64 * y_ratio) as u32) as f64;
 
-                        let top_left = self.image.get_pixel_at(x1, y1).unwrap();
-                        let top_right = self.image.get_pixel_at(x2, y1).unwrap();
-                        let bottom_left = self.image.get_pixel_at(x1, y2).unwrap();
-                        let bottom_right = self.image.get_pixel_at(x2, y2).unwrap();
+                        let top_left: Pixels<T> = self.image.get_pixel_at(x1, y1).unwrap();
+                        let top_right: Pixels<T> = self.image.get_pixel_at(x2, y1).unwrap();
+                        let bottom_left: Pixels<T> = self.image.get_pixel_at(x1, y2).unwrap();
+                        let bottom_right: Pixels<T> = self.image.get_pixel_at(x2, y2).unwrap();
 
-                        let top = top_left.clone() + (top_right - top_left) * x_diff;
-                        let bottom = bottom_left.clone() + (bottom_right - bottom_left) * x_diff;
+                        let top: Pixels<T> = top_left.clone() + (top_right - top_left) * x_diff;
+                        let bottom: Pixels<T> =
+                            bottom_left.clone() + (bottom_right - bottom_left) * x_diff;
 
                         (top).clone() + (bottom - top) * y_diff
                     })
-                    .collect::<Vec<Pixels>>()
+                    .collect::<Vec<Pixels<T>>>()
             })
-            .collect::<Vec<Pixels>>();
+            .collect::<Vec<Pixels<T>>>();
 
         Images::new(
             self.new_width,

@@ -9,27 +9,36 @@ pub enum RotatingOperations {
     Rotate90Right,
 }
 
-pub struct FlipVertical {
-    image: Images,
+pub struct FlipVertical<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    image: Images<T>,
 }
 
-impl FlipVertical {
-    pub fn new(image: &Images) -> Self {
+impl<T> FlipVertical<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    pub fn new(image: &Images<T>) -> Self {
         Self {
             image: image.clone(),
         }
     }
 }
 
-impl Operation for FlipVertical {
-    fn apply(&self) -> Images {
+impl<T> Operation<T> for FlipVertical<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    fn apply(&self) -> Images<T> {
         let original_image = self.image.get_image().clone();
 
-        let new_pixel = (0..self.image.get_height())
+        let new_pixel: Vec<Pixels<T>> = (0..self.image.get_height())
             .into_par_iter()
             .rev()
             .flat_map(|y_index| {
-                let mut vec_slice: Vec<Pixels> = Vec::from_iter(
+                let mut vec_slice: Vec<Pixels<T>> = Vec::from_iter(
                     original_image[(y_index * self.image.get_width()) as usize
                         ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
                         .iter()
@@ -39,9 +48,9 @@ impl Operation for FlipVertical {
                 vec_slice.reverse();
                 vec_slice
             })
-            .collect::<Vec<Pixels>>();
+            .collect::<Vec<Pixels<T>>>();
 
-        let flipped_image: Images = Images::new(
+        let flipped_image: Images<T> = Images::new(
             self.image.get_width(),
             self.image.get_height(),
             self.image.get_channels(),
@@ -52,26 +61,35 @@ impl Operation for FlipVertical {
     }
 }
 
-pub struct FlipHorizontal {
-    image: Images,
+pub struct FlipHorizontal<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    image: Images<T>,
 }
 
-impl FlipHorizontal {
-    pub fn new(image: &Images) -> Self {
+impl<T> FlipHorizontal<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    pub fn new(image: &Images<T>) -> Self {
         Self {
             image: image.clone(),
         }
     }
 }
 
-impl Operation for FlipHorizontal {
-    fn apply(&self) -> Images {
+impl<T> Operation<T> for FlipHorizontal<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    fn apply(&self) -> Images<T> {
         let original_image = self.image.get_image().clone();
 
-        let new_pixel = (0..self.image.get_height())
+        let new_pixel: Vec<Pixels<T>> = (0..self.image.get_height())
             .into_par_iter()
             .flat_map(|y_index| {
-                let mut vec_slice: Vec<Pixels> = Vec::from_iter(
+                let mut vec_slice: Vec<Pixels<T>> = Vec::from_iter(
                     original_image[(y_index * self.image.get_width()) as usize
                         ..((y_index * self.image.get_width()) + self.image.get_width()) as usize]
                         .iter()
@@ -81,9 +99,9 @@ impl Operation for FlipHorizontal {
                 vec_slice.reverse();
                 vec_slice
             })
-            .collect::<Vec<Pixels>>();
+            .collect::<Vec<Pixels<T>>>();
 
-        let flipped_image: Images = Images::new(
+        let flipped_image: Images<T> = Images::new(
             self.image.get_width(),
             self.image.get_height(),
             self.image.get_channels(),
@@ -94,26 +112,35 @@ impl Operation for FlipHorizontal {
     }
 }
 
-pub struct Flip90Left {
-    image: Images,
+pub struct Flip90Left<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    image: Images<T>,
 }
 
-impl Flip90Left {
-    pub fn new(image: &Images) -> Self {
+impl<T> Flip90Left<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    pub fn new(image: &Images<T>) -> Self {
         Self {
             image: image.clone(),
         }
     }
 }
 
-impl Operation for Flip90Left {
-    fn apply(&self) -> Images {
+impl<T> Operation<T> for Flip90Left<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    fn apply(&self) -> Images<T> {
         let original_image = self.image.get_image().clone();
 
-        let new_pixel = (0..self.image.get_width())
+        let new_pixel: Vec<Pixels<T>> = (0..self.image.get_width())
             .into_par_iter()
             .flat_map(|x_index| {
-                let mut vec_slice: Vec<Pixels> = original_image
+                let mut vec_slice: Vec<Pixels<T>> = original_image
                     .iter()
                     .skip(x_index as usize)
                     .step_by(self.image.get_height() as usize)
@@ -123,9 +150,9 @@ impl Operation for Flip90Left {
                 vec_slice.reverse();
                 vec_slice
             })
-            .collect::<Vec<Pixels>>();
+            .collect::<Vec<Pixels<T>>>();
 
-        let flipped_image: Images = Images::new(
+        let flipped_image: Images<T> = Images::new(
             self.image.get_width(),
             self.image.get_height(),
             self.image.get_channels(),
@@ -136,26 +163,35 @@ impl Operation for Flip90Left {
     }
 }
 
-pub struct Flip90Right {
-    image: Images,
+pub struct Flip90Right<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    image: Images<T>,
 }
 
-impl Flip90Right {
-    pub fn new(image: &Images) -> Self {
+impl<T> Flip90Right<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    pub fn new(image: &Images<T>) -> Self {
         Self {
             image: image.clone(),
         }
     }
 }
 
-impl Operation for Flip90Right {
-    fn apply(&self) -> Images {
-        let original_image = self.image.get_image().clone();
+impl<T> Operation<T> for Flip90Right<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    fn apply(&self) -> Images<T> {
+        let original_image: Vec<Pixels<T>> = self.image.get_image().clone();
 
         let new_pixel = (0..self.image.get_width())
             .into_par_iter()
             .flat_map(|x_index| {
-                let vec_slice: Vec<Pixels> = original_image
+                let vec_slice: Vec<Pixels<T>> = original_image
                     .iter()
                     .skip(x_index as usize)
                     .step_by(self.image.get_height() as usize)
@@ -164,9 +200,9 @@ impl Operation for Flip90Right {
 
                 vec_slice
             })
-            .collect::<Vec<Pixels>>();
+            .collect::<Vec<Pixels<T>>>();
 
-        let flipped_image: Images = Images::new(
+        let flipped_image: Images<T> = Images::new(
             self.image.get_width(),
             self.image.get_height(),
             self.image.get_channels(),

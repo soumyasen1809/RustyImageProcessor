@@ -1,6 +1,6 @@
 use std::ops::{Add, Div, Mul, Sub};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Pixels<T>
 where
     T: Copy + Clone + From<u8> + std::cmp::PartialEq,
@@ -162,16 +162,14 @@ where
     }
 }
 
-// Implmentation of Partial Eq gives error in Images
-// when comparing pixels
-// impl<T> PartialEq for Pixels<T>
-// where
-//     T: Copy + Clone + From<u8> + Into<f64> + std::cmp::PartialEq,
-// {
-//     fn eq(&self, other: &Self) -> bool {
-//         self.red == other.red
-//             && self.green == other.green
-//             && self.blue == other.blue
-//             && self.alpha == other.alpha
-//     }
-// }
+impl<T> PartialEq for Pixels<T>
+where
+    T: Copy + Clone + From<u8> + Into<f64> + std::cmp::PartialEq,
+{
+    fn eq(&self, other: &Self) -> bool {
+        self.red == other.red
+            && self.green == other.green
+            && self.blue == other.blue
+            && self.alpha == other.alpha
+    }
+}

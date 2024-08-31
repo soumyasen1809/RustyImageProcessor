@@ -41,7 +41,7 @@ where
 
 impl<T> Operation<T> for EdgeDetection<T>
 where
-    T: Copy + Clone + From<u8> + From<i32> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     fn apply(&self) -> Images<T> {
         let kernel: Vec<i32> = select_edge_detecting_kernel(self.kernel_choice);

@@ -19,15 +19,7 @@ fn select_smoothing_kernel(choice: SharpeningKernelChoices) -> Vec<i32> {
 
 pub struct Sharpen<T>
 where
-    T: Copy
-        + Clone
-        + From<u8>
-        + From<u32>
-        + From<i32>
-        + Into<u32>
-        + std::cmp::PartialEq
-        + Send
-        + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     image: Images<T>,
     kernel_choice: SharpeningKernelChoices,
@@ -35,15 +27,7 @@ where
 
 impl<T> Sharpen<T>
 where
-    T: Copy
-        + Clone
-        + From<u8>
-        + From<u32>
-        + Into<u32>
-        + From<i32>
-        + std::cmp::PartialEq
-        + Send
-        + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     pub fn new(image: &Images<T>, kernel_choice: SharpeningKernelChoices) -> Self {
         Self {
@@ -55,15 +39,7 @@ where
 
 impl<T> Operation<T> for Sharpen<T>
 where
-    T: Copy
-        + Clone
-        + From<u8>
-        + From<i32>
-        + From<u32>
-        + Into<u32>
-        + std::cmp::PartialEq
-        + Send
-        + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     fn apply(&self) -> Images<T> {
         let kernel: Vec<i32> = select_smoothing_kernel(self.kernel_choice);

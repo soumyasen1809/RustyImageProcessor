@@ -32,7 +32,7 @@ where
 /// Y-Axis: Represents the frequency of pixels with that intensity.
 pub fn compute_histogram<T>(image: &Images<T>) -> Vec<HashMap<T, u32>>
 where
-    T: Copy + Clone + From<u8> + From<i32> + Eq + Hash + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Eq + Hash + std::cmp::PartialEq + Send + Sync,
 {
     let mut red_histogram_map: HashMap<T, u32> = HashMap::new();
     let mut green_histogram_map: HashMap<T, u32> = HashMap::new();

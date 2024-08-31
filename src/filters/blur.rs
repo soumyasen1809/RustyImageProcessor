@@ -38,7 +38,7 @@ where
 // AI: Algorithm from Gemini
 impl<T> Operation<T> for Blur<T>
 where
-    T: Copy + Clone + From<u8> + From<u32> + Into<u32> + std::cmp::PartialEq + Send + Sync, // Send + Sync required for Rayon to safely pass T between threads
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync, // Send + Sync required for Rayon to safely pass T between threads
 {
     fn apply(&self) -> Images<T> {
         let kernel = select_smoothing_kernel(self.kernel_choice);

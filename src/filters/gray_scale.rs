@@ -10,7 +10,7 @@ pub enum GrayScaleAlgorithms {
 
 fn select_grayscale_algorithm<T>(algo: &GrayScaleAlgorithms, pix: &Pixels<T>) -> T
 where
-    T: Copy + Clone + From<u8> + From<f64> + Into<u32> + std::cmp::PartialEq,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq,
 {
     match algo {
         GrayScaleAlgorithms::Average => (((pix.get_red().into() as f64
@@ -32,7 +32,7 @@ where
 
 pub struct GrayScale<T>
 where
-    T: Copy + Clone + From<u8> + From<f64> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     image: Images<T>,
     algo: GrayScaleAlgorithms,
@@ -40,7 +40,7 @@ where
 
 impl<T> GrayScale<T>
 where
-    T: Copy + Clone + From<u8> + From<f64> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     pub fn new(image: &Images<T>, algo: GrayScaleAlgorithms) -> Self {
         Self {
@@ -52,7 +52,7 @@ where
 
 impl<T> Operation<T> for GrayScale<T>
 where
-    T: Copy + Clone + From<u8> + From<f64> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     fn apply(&self) -> Images<T> {
         let new_pixel = self

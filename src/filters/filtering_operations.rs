@@ -25,10 +25,10 @@ where
     T: Copy
         + Clone
         + From<u8>
-        + From<u32>
+        // + From<u32>
         + Into<u32>
-        + From<f64>
-        + From<i32>
+        // + From<f64>
+        // + From<i32>
         + std::cmp::PartialEq
         + Send
         + Sync,

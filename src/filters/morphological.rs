@@ -117,7 +117,7 @@ where
 
 pub struct Dilation<T>
 where
-    T: Copy + Clone + From<u8> + From<u32> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     image: Images<T>,
     kernel_choice: MorphologicalKernelChoices,
@@ -125,7 +125,7 @@ where
 
 impl<T> Dilation<T>
 where
-    T: Copy + Clone + From<u8> + From<u32> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     pub fn new(image: &Images<T>, kernel_choice: MorphologicalKernelChoices) -> Self {
         Self {
@@ -137,7 +137,7 @@ where
 
 impl<T> Operation<T> for Dilation<T>
 where
-    T: Copy + Clone + From<u8> + From<u32> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
     fn apply(&self) -> Images<T> {
         let mut new_image: Images<T> = Images::<T>::new(

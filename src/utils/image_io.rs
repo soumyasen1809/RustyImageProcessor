@@ -5,7 +5,7 @@ use crate::core::{image::Images, pixel::Pixels};
 
 pub fn image_reader<T>(filepath: &str) -> Result<Images<T>, Box<dyn std::error::Error>>
 where
-    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Into<u8> + std::cmp::PartialEq + Send + Sync,
 {
     let read_image = image::ImageReader::open(filepath)?.decode()?;
 
@@ -20,10 +20,10 @@ where
                 .map(|w_index| {
                     let pixel = read_image.get_pixel(w_index, h_index).to_rgba();
                     Pixels::new(
-                        *pixel.channels().first().unwrap(),
-                        *pixel.channels().get(1).unwrap(),
-                        *pixel.channels().get(2).unwrap(),
-                        *pixel.channels().get(3).unwrap(),
+                        (*pixel.channels().get(0).unwrap()).into(),
+                        (*pixel.channels().get(1).unwrap()).into(),
+                        (*pixel.channels().get(2).unwrap()).into(),
+                        (*pixel.channels().get(3).unwrap()).into(),
                     )
                 })
                 .collect::<Vec<Pixels<T>>>()

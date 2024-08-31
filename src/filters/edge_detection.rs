@@ -20,12 +20,12 @@ fn select_edge_detecting_kernel(choice: EdgeDetectingKernelChoices) -> Vec<i32> 
 }
 
 pub struct EdgeDetection {
-    image: Images,
+    image: Images<T>,
     kernel_choice: EdgeDetectingKernelChoices,
 }
 
 impl EdgeDetection {
-    pub fn new(image: &Images, kernel_choice: EdgeDetectingKernelChoices) -> Self {
+    pub fn new(image: &Images<T>, kernel_choice: EdgeDetectingKernelChoices) -> Self {
         Self {
             image: image.clone(),
             kernel_choice,
@@ -87,7 +87,6 @@ impl Operation for EdgeDetection {
                         // For sharpening, the kernel is designed to highlight edges and details.
                         // The sum of the elements in a sharpening kernel is usually zero or close to zero,
                         // which means normalizing by the sum would lead to incorrect results.
-                        
 
                         Pixels::new(
                             sum_r.clamp(0, 255) as u8,
@@ -99,8 +98,6 @@ impl Operation for EdgeDetection {
                     .collect::<Vec<Pixels>>()
             })
             .collect::<Vec<Pixels>>();
-
-        
 
         Images::new(
             output_width,

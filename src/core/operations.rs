@@ -1,5 +1,5 @@
 use super::image::Images;
 
-pub trait Operation {
-    fn apply(&self) -> Images;
+pub trait Operation<T> {
+    fn apply(&self) -> Images<T>;
 }

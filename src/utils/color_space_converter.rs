@@ -1,11 +1,14 @@
 use crate::core::image::Images;
 
-pub fn rgba_to_hsv(image: Images) -> Vec<(f64, f64, f64)> {
+pub fn rgba_to_hsv<T>(image: Images<T>) -> Vec<(f64, f64, f64)>
+where
+    T: Copy + Clone + From<u8> + Into<f64> + std::cmp::PartialEq,
+{
     let mut hsv_image: Vec<(f64, f64, f64)> = Vec::new();
     for pix in image.get_image() {
-        let r = pix.get_red() as f64 / 255.0;
-        let g = pix.get_green() as f64 / 255.0;
-        let b = pix.get_blue() as f64 / 255.0;
+        let r = pix.get_red().into() as f64 / 255.0;
+        let g = pix.get_green().into() as f64 / 255.0;
+        let b = pix.get_blue().into() as f64 / 255.0;
 
         let min_val = (r.min(g)).min(b);
         let max_val = (r.max(g)).max(b);

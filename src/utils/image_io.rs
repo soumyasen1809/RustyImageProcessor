@@ -3,11 +3,14 @@ use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::core::{image::Images, pixel::Pixels};
 
-pub fn image_reader(filepath: &str) -> Result<Images, Box<dyn std::error::Error>> {
+pub fn image_reader<T>(filepath: &str) -> Result<Images<T>, Box<dyn std::error::Error>>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
     let read_image = image::ImageReader::open(filepath)?.decode()?;
 
     println!("INFO: Starting to read image from {:?} . . .", filepath);
-    let mut image_bytes: Vec<Pixels> = Vec::new();
+    let mut image_bytes: Vec<Pixels<T>> = Vec::new();
 
     let read_pixels = (0..read_image.height())
         .into_par_iter()
@@ -23,9 +26,9 @@ pub fn image_reader(filepath: &str) -> Result<Images, Box<dyn std::error::Error>
                         *pixel.channels().get(3).unwrap(),
                     )
                 })
-                .collect::<Vec<Pixels>>()
+                .collect::<Vec<Pixels<T>>>()
         })
-        .collect::<Vec<Pixels>>();
+        .collect::<Vec<Pixels<T>>>();
 
     for pix in read_pixels.iter() {
         image_bytes.push(pix.clone());
@@ -42,10 +45,13 @@ pub fn image_reader(filepath: &str) -> Result<Images, Box<dyn std::error::Error>
     Ok(image)
 }
 
-pub fn image_writer(
+pub fn image_writer<T>(
     filepath: &str,
-    write_image: &Images,
-) -> Result<(), Box<dyn std::error::Error>> {
+    write_image: &Images<T>,
+) -> Result<(), Box<dyn std::error::Error>>
+where
+    T: Copy + Clone + From<u8> + Into<u8> + std::cmp::PartialEq + Send + Sync,
+{
     let mut image: image::DynamicImage =
         image::DynamicImage::new_rgba8(write_image.get_width(), write_image.get_height());
 
@@ -57,10 +63,10 @@ pub fn image_writer(
             let rgba = &write_image;
             let pixel_data = rgba.get_pixel_at(x_index, y_index).unwrap();
             *pixel = Rgba([
-                pixel_data.get_red(),
-                pixel_data.get_green(),
-                pixel_data.get_blue(),
-                pixel_data.get_alpha(),
+                pixel_data.get_red().into(),
+                pixel_data.get_green().into(),
+                pixel_data.get_blue().into(),
+                pixel_data.get_alpha().into(),
             ]);
         });
 

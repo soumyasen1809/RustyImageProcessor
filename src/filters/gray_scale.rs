@@ -8,29 +8,41 @@ pub enum GrayScaleAlgorithms {
     Luminosity,
 }
 
-fn select_grayscale_algorithm(algo: &GrayScaleAlgorithms, pix: &Pixels) -> u8 {
+fn select_grayscale_algorithm<T>(algo: &GrayScaleAlgorithms, pix: &Pixels<T>) -> T
+where
+    T: Copy + Clone + From<u8> + From<f64> + Into<u32> + std::cmp::PartialEq,
+{
     match algo {
-        GrayScaleAlgorithms::Average => {
-            ((pix.get_red() as f64 + pix.get_green() as f64 + pix.get_blue() as f64) / 3.0) as u8
-        }
+        GrayScaleAlgorithms::Average => (((pix.get_red().into() as f64
+            + pix.get_green().into() as f64
+            + pix.get_blue().into() as f64)
+            / 3.0) as u8)
+            .into(),
 
         GrayScaleAlgorithms::Luminosity => {
             // Luminosity method: https://www.mathworks.com/help/matlab/ref/rgb2gray.html
-            (((pix.get_red() as f64 * 0.299)
-                + (pix.get_green() as f64 * 0.5879)
-                + (pix.get_blue() as f64 * 0.114))
-                / 3.0) as u8
+            ((((pix.get_red().into() as f64 * 0.299)
+                + (pix.get_green().into() as f64 * 0.5879)
+                + (pix.get_blue().into() as f64 * 0.114))
+                / 3.0) as u8)
+                .into()
         }
     }
 }
 
-pub struct GrayScale {
-    image: Images,
+pub struct GrayScale<T>
+where
+    T: Copy + Clone + From<u8> + From<f64> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+{
+    image: Images<T>,
     algo: GrayScaleAlgorithms,
 }
 
-impl GrayScale {
-    pub fn new(image: &Images, algo: GrayScaleAlgorithms) -> Self {
+impl<T> GrayScale<T>
+where
+    T: Copy + Clone + From<u8> + From<f64> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+{
+    pub fn new(image: &Images<T>, algo: GrayScaleAlgorithms) -> Self {
         Self {
             image: image.clone(),
             algo,
@@ -38,9 +50,12 @@ impl GrayScale {
     }
 }
 
-impl Operation for GrayScale {
-    fn apply(&self) -> Images {
-        let new_pixel: Vec<Pixels> = self
+impl<T> Operation<T> for GrayScale<T>
+where
+    T: Copy + Clone + From<u8> + From<f64> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+{
+    fn apply(&self) -> Images<T> {
+        let new_pixel = self
             .image
             .get_image()
             .into_par_iter()
@@ -53,9 +68,7 @@ impl Operation for GrayScale {
                     pix.get_alpha(),
                 )
             })
-            .collect::<Vec<Pixels>>();
-
-        
+            .collect::<Vec<Pixels<T>>>();
 
         Images::new(
             self.image.get_width(),

@@ -17,13 +17,35 @@ fn select_smoothing_kernel(choice: SharpeningKernelChoices) -> Vec<i32> {
     }
 }
 
-pub struct Sharpen {
-    image: Images,
+pub struct Sharpen<T>
+where
+    T: Copy
+        + Clone
+        + From<u8>
+        + From<u32>
+        + From<i32>
+        + Into<u32>
+        + std::cmp::PartialEq
+        + Send
+        + Sync,
+{
+    image: Images<T>,
     kernel_choice: SharpeningKernelChoices,
 }
 
-impl Sharpen {
-    pub fn new(image: &Images, kernel_choice: SharpeningKernelChoices) -> Self {
+impl<T> Sharpen<T>
+where
+    T: Copy
+        + Clone
+        + From<u8>
+        + From<u32>
+        + Into<u32>
+        + From<i32>
+        + std::cmp::PartialEq
+        + Send
+        + Sync,
+{
+    pub fn new(image: &Images<T>, kernel_choice: SharpeningKernelChoices) -> Self {
         Self {
             image: image.clone(),
             kernel_choice,
@@ -31,8 +53,19 @@ impl Sharpen {
     }
 }
 
-impl Operation for Sharpen {
-    fn apply(&self) -> Images {
+impl<T> Operation<T> for Sharpen<T>
+where
+    T: Copy
+        + Clone
+        + From<u8>
+        + From<i32>
+        + From<u32>
+        + Into<u32>
+        + std::cmp::PartialEq
+        + Send
+        + Sync,
+{
+    fn apply(&self) -> Images<T> {
         let kernel: Vec<i32> = select_smoothing_kernel(self.kernel_choice);
 
         let kernel_size: u32 = 3;
@@ -63,9 +96,9 @@ impl Operation for Sharpen {
                                         let kernel_val =
                                             *kernel.get((dy * kernel_size + dx) as usize).unwrap();
                                         (
-                                            (pixel.get_red() as i32) * (kernel_val),
-                                            (pixel.get_green() as i32) * (kernel_val),
-                                            (pixel.get_blue() as i32) * (kernel_val),
+                                            (pixel.get_red().into() as i32) * (kernel_val),
+                                            (pixel.get_green().into() as i32) * (kernel_val),
+                                            (pixel.get_blue().into() as i32) * (kernel_val),
                                         )
                                     })
                                     .collect::<Vec<(i32, i32, i32)>>()
@@ -82,23 +115,16 @@ impl Operation for Sharpen {
                             sum_b += sum.2;
                         }
 
-                        // For sharpening, the kernel is designed to highlight edges and details.
-                        // The sum of the elements in a sharpening kernel is usually zero or close to zero,
-                        // which means normalizing by the sum would lead to incorrect results.
-                        
-
                         Pixels::new(
-                            sum_r.clamp(0, 255) as u8,
-                            sum_g.clamp(0, 255) as u8,
-                            sum_b.clamp(0, 255) as u8,
-                            255,
+                            (sum_r.clamp(0, 255) as u8).into(),
+                            (sum_g.clamp(0, 255) as u8).into(),
+                            (sum_b.clamp(0, 255) as u8).into(),
+                            (255 as u8).into(),
                         )
                     })
-                    .collect::<Vec<Pixels>>()
+                    .collect::<Vec<Pixels<T>>>()
             })
-            .collect::<Vec<Pixels>>();
-
-        
+            .collect::<Vec<Pixels<T>>>();
 
         Images::new(
             output_width,

@@ -24,7 +24,7 @@ where
                 .map(|w_index| {
                     let pixel = read_image.get_pixel(w_index, h_index).to_rgba();
                     Pixels::new(
-                        (*pixel.channels().get(0).unwrap()).into(),
+                        (*pixel.channels().first().unwrap()).into(),
                         (*pixel.channels().get(1).unwrap()).into(),
                         (*pixel.channels().get(2).unwrap()).into(),
                         (*pixel.channels().get(3).unwrap()).into(),

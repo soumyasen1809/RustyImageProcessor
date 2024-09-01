@@ -95,7 +95,7 @@ where
                             (sum_r.clamp(0, 255) as u8).into(),
                             (sum_g.clamp(0, 255) as u8).into(),
                             (sum_b.clamp(0, 255) as u8).into(),
-                            (255 as u8).into(),
+                            255_u8.into(),
                         )
                     })
                     .collect::<Vec<Pixels<T>>>()

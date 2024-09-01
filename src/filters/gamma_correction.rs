@@ -30,14 +30,14 @@ where
             .get_image()
             .iter()
             .map(|pix| {
-                let r = ((((pix.get_red().into() as f64) / 255.0).powf(self.gamma) * 255.0) as u8)
+                let r = (((pix.get_red().into() / 255.0).powf(self.gamma) * 255.0) as u8)
                     .into();
-                let g = ((((pix.get_green().into() as f64) / 255.0).powf(self.gamma) * 255.0)
+                let g = (((pix.get_green().into() / 255.0).powf(self.gamma) * 255.0)
                     as u8)
                     .into();
-                let b = ((((pix.get_blue().into() as f64) / 255.0).powf(self.gamma) * 255.0) as u8)
+                let b = (((pix.get_blue().into() / 255.0).powf(self.gamma) * 255.0) as u8)
                     .into();
-                let a = ((((pix.get_alpha().into() as f64) / 255.0).powf(self.gamma) * 255.0)
+                let a = (((pix.get_alpha().into() / 255.0).powf(self.gamma) * 255.0)
                     as u8)
                     .into();
 

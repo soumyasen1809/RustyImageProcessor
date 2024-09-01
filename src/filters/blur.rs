@@ -72,9 +72,9 @@ where
                                         let kernel_val =
                                             *kernel.get((dy * kernel_size + dx) as usize).unwrap();
                                         (
-                                            (pixel.get_red().into() as u32) * (kernel_val as u32),
-                                            (pixel.get_green().into() as u32) * (kernel_val as u32),
-                                            (pixel.get_blue().into() as u32) * (kernel_val as u32),
+                                            pixel.get_red().into() * (kernel_val as u32),
+                                            pixel.get_green().into() * (kernel_val as u32),
+                                            pixel.get_blue().into() * (kernel_val as u32),
                                         )
                                     })
                                     .collect::<Vec<(u32, u32, u32)>>()
@@ -95,7 +95,7 @@ where
                             ((sum_r / kernel_normalizer).clamp(0, 255) as u8).into(),
                             ((sum_g / kernel_normalizer).clamp(0, 255) as u8).into(),
                             ((sum_b / kernel_normalizer).clamp(0, 255) as u8).into(),
-                            (255 as u8).into(),
+                            255_u8.into(),
                         )
                     })
                     .collect::<Vec<Pixels<T>>>()

@@ -11,7 +11,7 @@ where
             (idx as u8 * 3).into(),
             (idx as u8 * 6).into(),
             (idx as u8 * 9).into(),
-            (255 as u8).into(),
+            255_u8.into(),
         )
     });
 
@@ -28,7 +28,7 @@ where
             (idx as u8 * 3).into(),
             (idx as u8 * 6).into(),
             (idx as u8 * 9).into(),
-            (255 as u8).into(),
+            255_u8.into(),
         )
     });
 

@@ -62,16 +62,16 @@ where
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
         Self {
-            red: ((self.red.into() as f64 + rhs.red.into() as f64) as u8)
+            red: ((self.red.into() + rhs.red.into()) as u8)
                 .clamp(0, 255)
                 .into(),
-            green: ((self.green.into() as f64 + rhs.green.into() as f64) as u8)
+            green: ((self.green.into() + rhs.green.into()) as u8)
                 .clamp(0, 255)
                 .into(),
-            blue: ((self.blue.into() as f64 + rhs.blue.into() as f64) as u8)
+            blue: ((self.blue.into() + rhs.blue.into()) as u8)
                 .clamp(0, 255)
                 .into(),
-            alpha: ((self.alpha.into() as f64 + rhs.alpha.into() as f64) as u8)
+            alpha: ((self.alpha.into() + rhs.alpha.into()) as u8)
                 .clamp(0, 255)
                 .into(),
         }
@@ -85,16 +85,16 @@ where
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         Self {
-            red: ((self.red.into() as f64 - rhs.red.into() as f64) as u8)
+            red: ((self.red.into() - rhs.red.into()) as u8)
                 .clamp(0, 255)
                 .into(),
-            green: ((self.green.into() as f64 - rhs.green.into() as f64) as u8)
+            green: ((self.green.into() - rhs.green.into()) as u8)
                 .clamp(0, 255)
                 .into(),
-            blue: ((self.blue.into() as f64 - rhs.blue.into() as f64) as u8)
+            blue: ((self.blue.into() - rhs.blue.into()) as u8)
                 .clamp(0, 255)
                 .into(),
-            alpha: ((self.alpha.into() as f64 - rhs.alpha.into() as f64) as u8)
+            alpha: ((self.alpha.into() - rhs.alpha.into()) as u8)
                 .clamp(0, 255)
                 .into(),
         }
@@ -108,12 +108,12 @@ where
     type Output = Self;
     fn mul(self, rhs: f64) -> Self::Output {
         Self {
-            red: ((self.red.into() as f64 * rhs) as u8).clamp(0, 255).into(),
-            green: ((self.green.into() as f64 * rhs) as u8)
+            red: ((self.red.into() * rhs) as u8).clamp(0, 255).into(),
+            green: ((self.green.into() * rhs) as u8)
                 .clamp(0, 255)
                 .into(),
-            blue: ((self.blue.into() as f64 * rhs) as u8).clamp(0, 255).into(),
-            alpha: ((self.alpha.into() as f64 * rhs) as u8)
+            blue: ((self.blue.into() * rhs) as u8).clamp(0, 255).into(),
+            alpha: ((self.alpha.into() * rhs) as u8)
                 .clamp(0, 255)
                 .into(),
         }
@@ -127,12 +127,12 @@ where
     type Output = Self;
     fn mul(self, rhs: u32) -> Self::Output {
         Self {
-            red: ((self.red.into() as u32 * rhs) as u8).clamp(0, 255).into(),
-            green: ((self.green.into() as u32 * rhs) as u8)
+            red: ((self.red.into() * rhs) as u8).clamp(0, 255).into(),
+            green: ((self.green.into() * rhs) as u8)
                 .clamp(0, 255)
                 .into(),
-            blue: ((self.blue.into() as u32 * rhs) as u8).clamp(0, 255).into(),
-            alpha: ((self.alpha.into() as u32 * rhs) as u8)
+            blue: ((self.blue.into() * rhs) as u8).clamp(0, 255).into(),
+            alpha: ((self.alpha.into() * rhs) as u8)
                 .clamp(0, 255)
                 .into(),
         }
@@ -146,16 +146,16 @@ where
     type Output = Self;
     fn div(self, rhs: u8) -> Self::Output {
         Self {
-            red: ((self.red.into() as u32 / rhs as u32) as u8)
+            red: ((self.red.into() / rhs as u32) as u8)
                 .clamp(0, 255)
                 .into(),
-            green: ((self.green.into() as u32 / rhs as u32) as u8)
+            green: ((self.green.into() / rhs as u32) as u8)
                 .clamp(0, 255)
                 .into(),
-            blue: ((self.blue.into() as u32 / rhs as u32) as u8)
+            blue: ((self.blue.into() / rhs as u32) as u8)
                 .clamp(0, 255)
                 .into(),
-            alpha: ((self.alpha.into() as u32 / rhs as u32) as u8)
+            alpha: ((self.alpha.into() / rhs as u32) as u8)
                 .clamp(0, 255)
                 .into(),
         }

@@ -6,9 +6,9 @@ where
 {
     let mut hsv_image: Vec<(f64, f64, f64)> = Vec::new();
     for pix in image.get_image() {
-        let r = pix.get_red().into() as f64 / 255.0;
-        let g = pix.get_green().into() as f64 / 255.0;
-        let b = pix.get_blue().into() as f64 / 255.0;
+        let r = pix.get_red().into() / 255.0;
+        let g = pix.get_green().into() / 255.0;
+        let b = pix.get_blue().into() / 255.0;
 
         let min_val = (r.min(g)).min(b);
         let max_val = (r.max(g)).max(b);
@@ -18,7 +18,7 @@ where
         if delta == 0.0 {
             hsv.0 = 0.0;
             hsv.1 = 0.0;
-            hsv.2 = max_val as f64;
+            hsv.2 = max_val;
         } else {
             if max_val == r {
                 hsv.0 = 60.0 * (g - b) / delta;

@@ -28,7 +28,8 @@ const PATH: &str = "assets/lenna.png";
 const OUT_PATH: &str = "assets/out_cropped.png";
 const GAMMA: f64 = 2.5;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let image = ImageReader::open(PATH)?.decode()?;
 
     println!(
@@ -39,7 +40,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .get(2)
     );
 
-    let image_read: Result<Images<u8>, Box<dyn Error>> = image_reader(PATH);
+    let image_read: Result<Images<u8>, Box<dyn Error>> = image_reader(PATH).await;
     let transform_operations = vec![
         // TransformationOperations::Rotate(RotatingOperations::RotateVertical),
         TransformationOperations::Rotate(RotatingOperations::RotateHorizontal),

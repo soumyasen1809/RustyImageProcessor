@@ -11,7 +11,7 @@ use crate::{
         blur::SmoothingKernelChoices,
         edge_detection::EdgeDetectingKernelChoices,
         filtering_operations::{self, FilteringOperations},
-        gamma_correction::GammaCorrection,
+        gamma_correction::GammaCorrectionChoice,
         gray_scale::GrayScaleAlgorithms,
         morphological::{MorphologicalKernelChoices, MorphologicalOperations},
         sharpen::SharpeningKernelChoices,
@@ -41,7 +41,6 @@ pub async fn process_images(
     is_dir: bool,
     dir: &str,
     dir_out: &str,
-    gamma: f64,
     path: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let mut dir_entries = fs::read_dir(dir).await?;
@@ -59,7 +58,7 @@ pub async fn process_images(
                         .get(2)
                 );
 
-                let final_image = computation_image_processing(img_path.clone(), gamma).await?;
+                let final_image = computation_image_processing(img_path.clone()).await?;
 
                 let mut out_file_name = Path::new(img_path.to_str().unwrap())
                     .file_stem()
@@ -84,7 +83,7 @@ pub async fn process_images(
                     .get(2)
             );
 
-            let final_image = computation_image_processing(PathBuf::from(path), gamma).await?;
+            let final_image = computation_image_processing(PathBuf::from(path)).await?;
 
             let mut out_file_name = Path::new(path)
                 .file_stem()
@@ -103,7 +102,6 @@ pub async fn process_images(
 
 pub async fn computation_image_processing(
     img_path: PathBuf,
-    gamma: f64,
 ) -> Result<Images<u8>, Box<dyn std::error::Error>> {
     let image_read: Result<Images<u8>, Box<dyn Error>> =
         image_reader(img_path.to_str().unwrap()).await;
@@ -178,7 +176,11 @@ pub async fn computation_image_processing(
     let morphed_image =
         filtering_operations::chain_operations(&edge_detected_image, morphing_operations);
 
-    let gamma_image = GammaCorrection::new(&morphed_image, gamma).apply();
+    let gamma_operations = vec![FilteringOperations::GammaCorrecting(
+        GammaCorrectionChoice::SimpleGamma(1.5),
+    )];
+
+    let gamma_image = filtering_operations::chain_operations(&morphed_image, gamma_operations);
 
     let histogram_stats = compute_histogram(&gamma_image);
     print_histogram(histogram_stats);

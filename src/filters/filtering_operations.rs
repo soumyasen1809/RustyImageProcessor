@@ -1,11 +1,15 @@
 use crate::{
     core::{image::Images, operations::Operation},
-    filters::morphological::{Dilation, Erosion},
+    filters::{
+        gamma_correction::GammaCorrection,
+        morphological::{Dilation, Erosion},
+    },
 };
 
 use super::{
     blur::{Blur, SmoothingKernelChoices},
     edge_detection::{EdgeDetectingKernelChoices, EdgeDetection},
+    gamma_correction::GammaCorrectionChoice,
     gray_scale::{GrayScale, GrayScaleAlgorithms},
     morphological::MorphologicalOperations,
     sharpen::{Sharpen, SharpeningKernelChoices},
@@ -17,12 +21,13 @@ pub enum FilteringOperations {
     Sharpening(SharpeningKernelChoices),
     EdgeDetecting(EdgeDetectingKernelChoices),
     Morphological(MorphologicalOperations),
+    GammaCorrecting(GammaCorrectionChoice),
 }
 
 // Since chain_operations does not need self, we do not need it as impl FilteringOptions
 pub fn chain_operations<T>(image: &Images<T>, operations: Vec<FilteringOperations>) -> Images<T>
 where
-    T: Copy + Clone + From<u8> + Into<u32> + Ord + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + Into<f64> + Ord + std::cmp::PartialEq + Send + Sync,
 {
     let mut new_image: Images<T> = image.clone();
 
@@ -95,6 +100,11 @@ where
             )) => {
                 println!("INFO: Dialating image");
                 Dilation::new(&new_image, *morphological_kernel_choices).apply()
+            }
+
+            FilteringOperations::GammaCorrecting(GammaCorrectionChoice::SimpleGamma(gamma)) => {
+                println!("INFO: Gamma correcting image");
+                GammaCorrection::new(&new_image, *gamma).apply()
             }
         };
     }

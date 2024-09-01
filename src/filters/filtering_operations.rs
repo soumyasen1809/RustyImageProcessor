@@ -22,16 +22,7 @@ pub enum FilteringOperations {
 // Since chain_operations does not need self, we do not need it as impl FilteringOptions
 pub fn chain_operations<T>(image: &Images<T>, operations: Vec<FilteringOperations>) -> Images<T>
 where
-    T: Copy
-        + Clone
-        + From<u8>
-        // + From<u32>
-        + Into<u32>
-        // + From<f64>
-        // + From<i32>
-        + std::cmp::PartialEq
-        + Send
-        + Sync,
+    T: Copy + Clone + From<u8> + Into<u32> + Ord + std::cmp::PartialEq + Send + Sync,
 {
     let mut new_image: Images<T> = image.clone();
 

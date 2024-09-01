@@ -57,7 +57,7 @@ where
             })
             .collect::<Vec<Pixels<T>>>();
 
-        Images::<T>::new(
+        Images::new(
             self.new_width,
             self.new_height,
             self.image.get_channels(),

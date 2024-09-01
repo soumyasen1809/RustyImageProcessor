@@ -60,10 +60,10 @@ where
 
 impl<T> Operation<T> for Erosion<T>
 where
-    T: Copy + Clone + From<u8> + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + From<u8> + Into<u32> + std::cmp::PartialEq + Ord + Send + Sync,
 {
     fn apply(&self) -> Images<T> {
-        let mut new_image = Images::<T>::new(
+        let mut new_image: Images<T> = Images::new(
             self.image.get_width(),
             self.image.get_height(),
             self.image.get_channels(),
@@ -80,30 +80,22 @@ where
 
         for y_index in 1..self.image.get_height() - 1 {
             for x_index in 1..self.image.get_width() - 1 {
-                let mut min_val: (u8, u8, u8, u8) = (255, 255, 255, 255);
+                let mut min_val: (T, T, T, T) = (255.into(), 255.into(), 255.into(), 255.into());
 
                 for index in 0..kernel.len() {
-                    let dx = index % 3 - 1;
-                    let dy = index / 3 - 1;
-                    let pix = self
-                        .image
-                        .get_pixel_at(x_index + dx as u32, y_index + dy as u32)
-                        .unwrap();
+                    let dx = (index % 3) as u32 - 1;
+                    let dy = (index / 3) as u32 - 1;
+                    let pix = self.image.get_pixel_at(x_index + dx, y_index + dy).unwrap();
                     if *kernel.get(index).unwrap() != 0 {
-                        min_val.0 = min_val.0.min(pix.get_red().into() as u8);
-                        min_val.1 = min_val.1.min(pix.get_green().into() as u8);
-                        min_val.2 = min_val.2.min(pix.get_blue().into() as u8);
-                        min_val.3 = min_val.3.min(pix.get_alpha().into() as u8);
+                        min_val.0 = min_val.0.min(pix.get_red());
+                        min_val.1 = min_val.1.min(pix.get_green());
+                        min_val.2 = min_val.2.min(pix.get_blue());
+                        min_val.3 = min_val.3.min(pix.get_alpha());
                     }
                 }
 
                 image_data[((y_index - 1) * new_image.get_width() + (x_index - 1)) as usize] =
-                    Pixels::new(
-                        min_val.0.into(),
-                        min_val.1.into(),
-                        min_val.2.into(),
-                        min_val.3.into(),
-                    );
+                    Pixels::new(min_val.0, min_val.1, min_val.2, min_val.3);
             }
         }
 
@@ -137,10 +129,10 @@ where
 
 impl<T> Operation<T> for Dilation<T>
 where
-    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+    T: Copy + Clone + From<u8> + From<u8> + Into<u32> + std::cmp::PartialEq + Ord + Send + Sync,
 {
     fn apply(&self) -> Images<T> {
-        let mut new_image: Images<T> = Images::<T>::new(
+        let mut new_image: Images<T> = Images::new(
             self.image.get_width(),
             self.image.get_height(),
             self.image.get_channels(),
@@ -157,30 +149,22 @@ where
 
         for y_index in 1..self.image.get_height() - 1 {
             for x_index in 1..self.image.get_width() - 1 {
-                let mut max_val: (u8, u8, u8, u8) = (0, 0, 0, 0);
+                let mut max_val: (T, T, T, T) = (0.into(), 0.into(), 0.into(), 0.into());
 
                 for index in 0..kernel.len() {
-                    let dx = index % 3 - 1;
-                    let dy = index / 3 - 1;
-                    let pix = self
-                        .image
-                        .get_pixel_at(x_index + dx as u32, y_index + dy as u32)
-                        .unwrap();
+                    let dx = (index % 3) as u32 - 1;
+                    let dy = (index / 3) as u32 - 1;
+                    let pix = self.image.get_pixel_at(x_index + dx, y_index + dy).unwrap();
                     if *kernel.get(index).unwrap() != 0 {
-                        max_val.0 = max_val.0.max(pix.get_red().into() as u8);
-                        max_val.1 = max_val.1.max(pix.get_green().into() as u8);
-                        max_val.2 = max_val.2.max(pix.get_blue().into() as u8);
-                        max_val.3 = max_val.3.max(pix.get_alpha().into() as u8);
+                        max_val.0 = max_val.0.max(pix.get_red());
+                        max_val.1 = max_val.1.max(pix.get_green());
+                        max_val.2 = max_val.2.max(pix.get_blue());
+                        max_val.3 = max_val.3.max(pix.get_alpha());
                     }
                 }
 
                 image_data[((y_index - 1) * new_image.get_width() + (x_index - 1)) as usize] =
-                    Pixels::new(
-                        max_val.0.into(),
-                        max_val.1.into(),
-                        max_val.2.into(),
-                        max_val.3.into(),
-                    );
+                    Pixels::new(max_val.0, max_val.1, max_val.2, max_val.3);
             }
         }
 

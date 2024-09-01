@@ -42,33 +42,60 @@ pub async fn process_images(
     dir: &str,
     dir_out: &str,
     gamma: f64,
+    path: &str,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    // let image = ImageReader::open(PATH)?.decode()?;
     let mut dir_entries = fs::read_dir(dir).await?;
-    while let Some(entry) = dir_entries.next_entry().await? {
-        let img_path = entry.path();
-        let image = ImageReader::open(img_path.clone())?.decode()?;
+    match is_dir {
+        true => {
+            while let Some(entry) = dir_entries.next_entry().await? {
+                let img_path = entry.path();
+                let image = ImageReader::open(img_path.clone())?.decode()?;
 
-        println!(
-            "Last pixel in image is: {:?}",
-            image
-                .get_pixel(image.width() - 1, image.height() - 1)
-                .channels()
-                .get(2)
-        );
+                println!(
+                    "Last pixel in image is: {:?}",
+                    image
+                        .get_pixel(image.width() - 1, image.height() - 1)
+                        .channels()
+                        .get(2)
+                );
 
-        let final_image = computation_image_processing(img_path.clone(), gamma).await?;
+                let final_image = computation_image_processing(img_path.clone(), gamma).await?;
 
-        let mut out_file_name = Path::new(img_path.to_str().unwrap())
-            .file_stem()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .replace("\"", "");
+                let mut out_file_name = Path::new(img_path.to_str().unwrap())
+                    .file_stem()
+                    .unwrap()
+                    .to_str()
+                    .unwrap()
+                    .replace("\"", "");
 
-        out_file_name = String::from(dir_out) + &out_file_name + &String::from(".png");
-        println!("Writing to: {:?}", out_file_name);
-        image_writer((out_file_name).as_str(), &final_image)?;
+                out_file_name = String::from(dir_out) + &out_file_name + &String::from(".png");
+                println!("Writing to: {:?}", out_file_name);
+                image_writer((out_file_name).as_str(), &final_image)?;
+            }
+        }
+        false => {
+            let image = ImageReader::open(path)?.decode()?;
+
+            println!(
+                "Last pixel in image is: {:?}",
+                image
+                    .get_pixel(image.width() - 1, image.height() - 1)
+                    .channels()
+                    .get(2)
+            );
+
+            let final_image = computation_image_processing(PathBuf::from(path), gamma).await?;
+
+            let mut out_file_name = Path::new(path)
+                .file_stem()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .replace("\"", "");
+            out_file_name = String::from(dir_out) + &out_file_name + &String::from(".png");
+            println!("Writing to: {:?}", out_file_name);
+            image_writer(&out_file_name, &final_image)?;
+        }
     }
 
     Ok(())

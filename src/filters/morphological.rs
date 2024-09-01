@@ -83,14 +83,26 @@ where
                 let mut min_val: (T, T, T, T) = (255.into(), 255.into(), 255.into(), 255.into());
 
                 for index in 0..kernel.len() {
-                    let dx = (index % 3) as u32 - 1;
-                    let dy = (index / 3) as u32 - 1;
-                    let pix = self.image.get_pixel_at(x_index + dx, y_index + dy).unwrap();
-                    if *kernel.get(index).unwrap() != 0 {
-                        min_val.0 = min_val.0.min(pix.get_red());
-                        min_val.1 = min_val.1.min(pix.get_green());
-                        min_val.2 = min_val.2.min(pix.get_blue());
-                        min_val.3 = min_val.3.min(pix.get_alpha());
+                    let dx = (index % 3) as i32 - 1;
+                    let dy = (index / 3) as i32 - 1;
+                    if (x_index as i32) + dx >= 0
+                        && (x_index as i32) + dx < self.image.get_width() as i32
+                        && (y_index as i32) + dy >= 0
+                        && (y_index as i32) + dy < self.image.get_height() as i32
+                    {
+                        let pix = self
+                            .image
+                            .get_pixel_at(
+                                (x_index as i32 + dx).try_into().unwrap(),
+                                (y_index as i32 + dy).try_into().unwrap(),
+                            )
+                            .unwrap();
+                        if *kernel.get(index).unwrap() != 0 {
+                            min_val.0 = min_val.0.min(pix.get_red());
+                            min_val.1 = min_val.1.min(pix.get_green());
+                            min_val.2 = min_val.2.min(pix.get_blue());
+                            min_val.3 = min_val.3.min(pix.get_alpha());
+                        }
                     }
                 }
 
@@ -152,14 +164,26 @@ where
                 let mut max_val: (T, T, T, T) = (0.into(), 0.into(), 0.into(), 0.into());
 
                 for index in 0..kernel.len() {
-                    let dx = (index % 3) as u32 - 1;
-                    let dy = (index / 3) as u32 - 1;
-                    let pix = self.image.get_pixel_at(x_index + dx, y_index + dy).unwrap();
-                    if *kernel.get(index).unwrap() != 0 {
-                        max_val.0 = max_val.0.max(pix.get_red());
-                        max_val.1 = max_val.1.max(pix.get_green());
-                        max_val.2 = max_val.2.max(pix.get_blue());
-                        max_val.3 = max_val.3.max(pix.get_alpha());
+                    let dx = (index % 3) as i32 - 1;
+                    let dy = (index / 3) as i32 - 1;
+                    if (x_index as i32) + dx >= 0
+                        && (x_index as i32) + dx < self.image.get_width() as i32
+                        && (y_index as i32) + dy >= 0
+                        && (y_index as i32) + dy < self.image.get_height() as i32
+                    {
+                        let pix = self
+                            .image
+                            .get_pixel_at(
+                                (x_index as i32 + dx).try_into().unwrap(),
+                                (y_index as i32 + dy).try_into().unwrap(),
+                            )
+                            .unwrap();
+                        if *kernel.get(index).unwrap() != 0 {
+                            max_val.0 = max_val.0.max(pix.get_red());
+                            max_val.1 = max_val.1.max(pix.get_green());
+                            max_val.2 = max_val.2.max(pix.get_blue());
+                            max_val.3 = max_val.3.max(pix.get_alpha());
+                        }
                     }
                 }
 

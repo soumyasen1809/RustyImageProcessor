@@ -165,5 +165,6 @@ For example, a distribution like:
 ```
 represents the number of pixels with that intensity
 
+
 <!-- Check: https://github.com/mbrlabs/pixl/tree/master/src/pixl -->
 <!-- https://medium.com/@lahiru.19/a-guide-to-image-processing-from-scratch-7a6a413fb682 -->

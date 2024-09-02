@@ -1,24 +1,38 @@
 use image_processor::core::{image::Images, pixel::Pixels};
 use rayon::iter::{IndexedParallelIterator, IntoParallelRefMutIterator, ParallelIterator};
 
-fn common_setup_complex() -> Images {
-    let mut vec_pix: Vec<Pixels> = vec![Pixels::new(0, 0, 0, 0); 16];
+fn common_setup_complex<T>() -> Images<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    let mut vec_pix: Vec<Pixels<T>> = vec![Pixels::new(0.into(), 0.into(), 0.into(), 0.into()); 16];
     vec_pix.par_iter_mut().enumerate().for_each(|(idx, val)| {
-        *val = Pixels::new(idx as u8 * 3, idx as u8 * 6, idx as u8 * 9, 255)
+        *val = Pixels::new(
+            (idx as u8 * 3).into(),
+            (idx as u8 * 6).into(),
+            (idx as u8 * 9).into(),
+            (255 as u8).into(),
+        )
     });
-    let img = Images::new(4, 4, 3, vec_pix);
 
-    img
+    Images::new(4, 4, 3, vec_pix)
 }
 
-fn common_setup_simple() -> Images {
-    let mut vec_pix: Vec<Pixels> = vec![Pixels::new(0, 0, 0, 0); 4];
+fn common_setup_simple<T>() -> Images<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq + Send + Sync,
+{
+    let mut vec_pix: Vec<Pixels<T>> = vec![Pixels::new(0.into(), 0.into(), 0.into(), 0.into()); 4];
     vec_pix.par_iter_mut().enumerate().for_each(|(idx, val)| {
-        *val = Pixels::new(idx as u8 * 3, idx as u8 * 6, idx as u8 * 9, 255)
+        *val = Pixels::new(
+            (idx as u8 * 3).into(),
+            (idx as u8 * 6).into(),
+            (idx as u8 * 9).into(),
+            (255 as u8).into(),
+        )
     });
-    let img = Images::new(2, 2, 3, vec_pix);
 
-    img
+    Images::new(2, 2, 3, vec_pix)
 }
 
 #[cfg(test)]

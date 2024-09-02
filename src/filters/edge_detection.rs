@@ -19,13 +19,19 @@ fn select_edge_detecting_kernel(choice: EdgeDetectingKernelChoices) -> Vec<i32> 
     }
 }
 
-pub struct EdgeDetection {
-    image: Images,
+pub struct EdgeDetection<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq,
+{
+    image: Images<T>,
     kernel_choice: EdgeDetectingKernelChoices,
 }
 
-impl EdgeDetection {
-    pub fn new(image: &Images, kernel_choice: EdgeDetectingKernelChoices) -> Self {
+impl<T> EdgeDetection<T>
+where
+    T: Copy + Clone + From<u8> + std::cmp::PartialEq,
+{
+    pub fn new(image: &Images<T>, kernel_choice: EdgeDetectingKernelChoices) -> Self {
         Self {
             image: image.clone(),
             kernel_choice,
@@ -33,8 +39,11 @@ impl EdgeDetection {
     }
 }
 
-impl Operation for EdgeDetection {
-    fn apply(&self) -> Images {
+impl<T> Operation<T> for EdgeDetection<T>
+where
+    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
+{
+    fn apply(&self) -> Images<T> {
         let kernel: Vec<i32> = select_edge_detecting_kernel(self.kernel_choice);
 
         let kernel_size: u32 = 3;
@@ -58,16 +67,16 @@ impl Operation for EdgeDetection {
                                         let pixel = self
                                             .image
                                             .get_pixel_at(
-                                                x_index as u32 + dx - half_kernel_size,
-                                                y_index as u32 + dy - half_kernel_size,
+                                                x_index + dx - half_kernel_size,
+                                                y_index + dy - half_kernel_size,
                                             )
                                             .unwrap();
                                         let kernel_val =
                                             *kernel.get((dy * kernel_size + dx) as usize).unwrap();
                                         (
-                                            (pixel.get_red() as i32) * (kernel_val),
-                                            (pixel.get_green() as i32) * (kernel_val),
-                                            (pixel.get_blue() as i32) * (kernel_val),
+                                            (pixel.get_red().into() as i32) * (kernel_val),
+                                            (pixel.get_green().into() as i32) * (kernel_val),
+                                            (pixel.get_blue().into() as i32) * (kernel_val),
                                         )
                                     })
                                     .collect::<Vec<(i32, i32, i32)>>()
@@ -87,26 +96,23 @@ impl Operation for EdgeDetection {
                         // For sharpening, the kernel is designed to highlight edges and details.
                         // The sum of the elements in a sharpening kernel is usually zero or close to zero,
                         // which means normalizing by the sum would lead to incorrect results.
-                        let new_pixel = Pixels::new(
-                            sum_r.clamp(0, 255) as u8,
-                            sum_g.clamp(0, 255) as u8,
-                            sum_b.clamp(0, 255) as u8,
-                            255,
-                        );
 
-                        new_pixel
+                        Pixels::new(
+                            (sum_r.clamp(0, 255) as u8).into(),
+                            (sum_g.clamp(0, 255) as u8).into(),
+                            (sum_b.clamp(0, 255) as u8).into(),
+                            (255 as u8).into(),
+                        )
                     })
-                    .collect::<Vec<Pixels>>()
+                    .collect::<Vec<Pixels<T>>>()
             })
-            .collect::<Vec<Pixels>>();
+            .collect::<Vec<Pixels<T>>>();
 
-        let output_image = Images::new(
+        Images::new(
             output_width,
             output_height,
             self.image.get_channels(),
             new_pixel.clone(),
-        );
-
-        output_image
+        )
     }
 }

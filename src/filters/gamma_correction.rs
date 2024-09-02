@@ -1,36 +1,21 @@
 use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
-pub enum GammaCorrectionChoice {
-    SimpleGamma(f64),
-}
-
-pub struct GammaCorrection<T>
-where
-    T: Copy + Clone + From<u8> + Into<f64> + std::cmp::PartialEq + Send + Sync,
-{
-    image: Images<T>,
+pub struct GammaCorrection {
     gamma: f64,
 }
 
-impl<T> GammaCorrection<T>
-where
-    T: Copy + Clone + From<u8> + Into<f64> + std::cmp::PartialEq + Send + Sync,
-{
-    pub fn new(image: &Images<T>, gamma: f64) -> Self {
-        Self {
-            image: image.clone(),
-            gamma,
-        }
+impl GammaCorrection {
+    pub fn new(gamma: f64) -> Self {
+        Self { gamma }
     }
 }
 
-impl<T> Operation<T> for GammaCorrection<T>
+impl<T> Operation<T> for GammaCorrection
 where
     T: Copy + Clone + From<u8> + Into<f64> + std::cmp::PartialEq + Send + Sync,
 {
-    fn apply(&self) -> Images<T> {
-        let new_image = self
-            .image
+    fn apply(&self, old_image: &Images<T>) -> Images<T> {
+        let new_image = old_image
             .get_image()
             .iter()
             .map(|pix| {
@@ -44,9 +29,9 @@ where
             .collect::<Vec<Pixels<T>>>();
 
         Images::new(
-            self.image.get_width(),
-            self.image.get_height(),
-            self.image.get_channels(),
+            old_image.get_width(),
+            old_image.get_height(),
+            old_image.get_channels(),
             new_image.clone(),
         )
     }

@@ -17,43 +17,33 @@ fn select_smoothing_kernel(choice: SharpeningKernelChoices) -> Vec<i32> {
     }
 }
 
-pub struct Sharpen<T>
-where
-    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
-{
-    image: Images<T>,
+pub struct Sharpen {
     kernel_choice: SharpeningKernelChoices,
 }
 
-impl<T> Sharpen<T>
-where
-    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
-{
-    pub fn new(image: &Images<T>, kernel_choice: SharpeningKernelChoices) -> Self {
-        Self {
-            image: image.clone(),
-            kernel_choice,
-        }
+impl Sharpen {
+    pub fn new(kernel_choice: SharpeningKernelChoices) -> Self {
+        Self { kernel_choice }
     }
 }
 
-impl<T> Operation<T> for Sharpen<T>
+impl<T> Operation<T> for Sharpen
 where
     T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
-    fn apply(&self) -> Images<T> {
+    fn apply(&self, old_image: &Images<T>) -> Images<T> {
         let kernel: Vec<i32> = select_smoothing_kernel(self.kernel_choice);
 
         let kernel_size: u32 = 3;
         let half_kernel_size = kernel_size / 2;
 
-        let output_width = self.image.get_width() - 2 * half_kernel_size;
-        let output_height = self.image.get_height() - 2 * half_kernel_size;
+        let output_width = old_image.get_width() - 2 * half_kernel_size;
+        let output_height = old_image.get_height() - 2 * half_kernel_size;
 
-        let new_pixel = (half_kernel_size..self.image.get_height() - half_kernel_size)
+        let new_pixel = (half_kernel_size..old_image.get_height() - half_kernel_size)
             .into_par_iter()
             .flat_map(|y_index| {
-                (half_kernel_size..self.image.get_width() - half_kernel_size)
+                (half_kernel_size..old_image.get_width() - half_kernel_size)
                     .into_par_iter()
                     .map(|x_index| {
                         let sum_vec: Vec<(i32, i32, i32)> = (0..kernel_size)
@@ -62,8 +52,7 @@ where
                                 (0..kernel_size)
                                     .into_par_iter()
                                     .map(|dx| {
-                                        let pixel = self
-                                            .image
+                                        let pixel = old_image
                                             .get_pixel_at(
                                                 x_index + dx - half_kernel_size,
                                                 y_index + dy - half_kernel_size,
@@ -105,7 +94,7 @@ where
         Images::new(
             output_width,
             output_height,
-            self.image.get_channels(),
+            old_image.get_channels(),
             new_pixel.clone(),
         )
     }

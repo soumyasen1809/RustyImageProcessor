@@ -28,7 +28,7 @@ pub async fn process_images<T>(
     dir: Option<&str>,
     dir_out: &str,
     path: Option<&str>,
-    operations: &Vec<Box<dyn Operation<T>>>, //clippy complains: change this to: `&[Box<dyn Operation<T>>], because writing `&Vec` instead of `&[_]` involves a new object where a slice will do
+    operations: &Vec<Box<dyn Operation<T>>>,
     print_stats: bool,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -48,7 +48,7 @@ where
     match is_dir {
         true => {
             if dir.is_none() {
-                return Err("DIR can not be None! for directory scan".into());
+                return Err("DIR can not be None for directory scan".into());
             }
             let mut dir_entries = fs::read_dir(dir.unwrap()).await?;
             while let Some(entry) = dir_entries.next_entry().await? {
@@ -84,7 +84,7 @@ where
         }
         false => {
             if path.is_none() {
-                return Err("PATH can not be None! for single image scan".into());
+                return Err("PATH can not be None for single image scan".into());
             }
             let image = ImageReader::open(path.unwrap())?.decode()?;
 

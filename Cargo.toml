@@ -7,9 +7,11 @@ edition = "2021"
 image = "0.25.2"
 rayon = "1.10.0"
 tokio = { version = "1.40.0", features = ["full"] }
+async-std = { version = "1", features = ["attributes", "tokio1"] }
 
-# No need to define [lib] explicitly if you're using src/lib.rs
-# as the library's main file
-# [lib]
-# name = "image_processing_lib"
-# path = "lib/lib.rs"
+[dev-dependencies]
+criterion = { version = "0.5.1", features = ["async_futures", "async_tokio"] }
+
+[[bench]]
+name = "bench_chain_operations"
+harness = false

@@ -28,7 +28,6 @@ where
     }
 
     pub fn get_image(&self) -> Vec<Pixels<T>> {
-        // If i use self instead of &self, we take ownership of self
         self.image_data.clone()
     }
 

@@ -16,6 +16,7 @@ image_processor/
 │   ├── core/
 │   │   ├── image.rs         // Image data structure
 │   │   ├── pixel.rs         // Pixel data structure
+│   │   ├── operations.rs    // Processing images, chain operations etc
 │   │   └── <...>.rs         // Other modules
 │   ├── filters/
 │   │   ├── blur.rs          // Gaussian blur, etc.

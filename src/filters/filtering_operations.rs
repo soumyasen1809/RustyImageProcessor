@@ -103,7 +103,7 @@ where
             }
 
             FilteringOperations::GammaCorrecting(GammaCorrectionChoice::SimpleGamma(gamma)) => {
-                println!("INFO: Gamma correcting image");
+                println!("INFO: Gamma correcting image with gamma: {:?}", gamma);
                 GammaCorrection::new(&new_image, *gamma).apply()
             }
         };

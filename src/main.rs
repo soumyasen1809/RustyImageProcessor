@@ -6,7 +6,7 @@ const PATH: &str = "assets/lenna.png";
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    process_images(false, DIR, DIR_OUT, PATH).await?;
+    process_images(false, None, DIR_OUT, Some(PATH)).await?;
 
     Ok(())
 }

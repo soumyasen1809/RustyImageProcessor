@@ -39,13 +39,16 @@ where
 
 pub async fn process_images(
     is_dir: bool,
-    dir: &str,
+    dir: Option<&str>,
     dir_out: &str,
-    path: &str,
+    path: Option<&str>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let mut dir_entries = fs::read_dir(dir).await?;
     match is_dir {
         true => {
+            if let None = dir {
+                return Err("DIR can not be None! for directory scan".into());
+            }
+            let mut dir_entries = fs::read_dir(dir.unwrap()).await?;
             while let Some(entry) = dir_entries.next_entry().await? {
                 let img_path = entry.path();
                 let image = ImageReader::open(img_path.clone())?.decode()?;
@@ -73,7 +76,10 @@ pub async fn process_images(
             }
         }
         false => {
-            let image = ImageReader::open(path)?.decode()?;
+            if let None = path {
+                return Err("PATH can not be None! for single image scan".into());
+            }
+            let image = ImageReader::open(path.unwrap())?.decode()?;
 
             println!(
                 "Last pixel in image is: {:?}",
@@ -83,9 +89,9 @@ pub async fn process_images(
                     .get(2)
             );
 
-            let final_image = computation_image_processing(PathBuf::from(path)).await?;
+            let final_image = computation_image_processing(PathBuf::from(path.unwrap())).await?;
 
-            let mut out_file_name = Path::new(path)
+            let mut out_file_name = Path::new(path.unwrap())
                 .file_stem()
                 .unwrap()
                 .to_str()

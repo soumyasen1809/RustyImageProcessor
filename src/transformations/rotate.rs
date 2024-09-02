@@ -4,6 +4,12 @@ use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 pub struct FlipVertical {}
 
+impl Default for FlipVertical {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FlipVertical {
     pub fn new() -> Self {
         Self {}
@@ -46,6 +52,12 @@ where
 
 pub struct FlipHorizontal {}
 
+impl Default for FlipHorizontal {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FlipHorizontal {
     pub fn new() -> Self {
         Self {}
@@ -87,6 +99,12 @@ where
 
 pub struct Flip90Left {}
 
+impl Default for Flip90Left {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Flip90Left {
     pub fn new() -> Self {
         Self {}
@@ -127,6 +145,12 @@ where
 }
 
 pub struct Flip90Right {}
+
+impl Default for Flip90Right {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl Flip90Right {
     pub fn new() -> Self {

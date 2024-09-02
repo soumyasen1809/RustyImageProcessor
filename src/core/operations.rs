@@ -1,3 +1,5 @@
+#![allow(clippy::ptr_arg)]
+
 use std::{
     fmt::Debug,
     hash::Hash,
@@ -26,7 +28,7 @@ pub async fn process_images<T>(
     dir: Option<&str>,
     dir_out: &str,
     path: Option<&str>,
-    operations: &Vec<Box<dyn Operation<T>>>,
+    operations: &Vec<Box<dyn Operation<T>>>, //clippy complains: change this to: `&[Box<dyn Operation<T>>], because writing `&Vec` instead of `&[_]` involves a new object where a slice will do
     print_stats: bool,
 ) -> Result<(), Box<dyn std::error::Error>>
 where
@@ -45,7 +47,7 @@ where
 {
     match is_dir {
         true => {
-            if let None = dir {
+            if dir.is_none() {
                 return Err("DIR can not be None! for directory scan".into());
             }
             let mut dir_entries = fs::read_dir(dir.unwrap()).await?;
@@ -62,7 +64,7 @@ where
                 );
 
                 let final_image =
-                    computation_image_processing(img_path.clone(), &operations).await?;
+                    computation_image_processing(img_path.clone(), operations).await?;
 
                 if print_stats {
                     print_statistics(&final_image).await;
@@ -81,7 +83,7 @@ where
             }
         }
         false => {
-            if let None = path {
+            if path.is_none() {
                 return Err("PATH can not be None! for single image scan".into());
             }
             let image = ImageReader::open(path.unwrap())?.decode()?;
@@ -95,7 +97,7 @@ where
             );
 
             let final_image =
-                computation_image_processing(PathBuf::from(path.unwrap()), &operations).await?;
+                computation_image_processing(PathBuf::from(path.unwrap()), operations).await?;
 
             if print_stats {
                 print_statistics(&final_image).await;
@@ -164,12 +166,12 @@ where
         + Debug
         + Ord,
 {
-    let histogram_stats = compute_histogram(&image);
+    let histogram_stats = compute_histogram(image);
     print_histogram(histogram_stats);
 
-    let mean = compute_mean(&image);
+    let mean = compute_mean(image);
     println!("Mean for the resized image: {:?}", mean);
 
-    let variance = compute_variance(&image);
+    let variance = compute_variance(image);
     println!("Variance for the resized image: {:?}", variance);
 }

@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         Box::new(Crop::new((50, 50), 128, 128)),
         Box::new(EdgeDetection::new(EdgeDetectingKernelChoices::Emboss)),
         Box::new(Sharpen::new(SharpeningKernelChoices::EdgeEnhancement)),
-        Box::new(Erosion::new(MorphologicalKernelChoices::DiamondKernel)),
+        Box::new(Erosion::new(MorphologicalKernelChoices::Diamond)),
         Box::new(GammaCorrection::new(1.5)),
     ];
 

@@ -2,32 +2,32 @@ use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
 #[derive(Clone, Copy)]
 pub enum MorphologicalKernelChoices {
-    CrossKernel,
-    DiamondKernel,
-    HorizontalKernel,
-    VerticalKernel,
-    DiagonalKernel,
-    DiagonalKernel2,
+    Cross,
+    Diamond,
+    Horizontal,
+    Vertical,
+    Diagonal,
+    Diagonal2,
 }
 
 fn choose_kernel(kernel: MorphologicalKernelChoices) -> Vec<i32> {
     match kernel {
-        MorphologicalKernelChoices::CrossKernel => {
+        MorphologicalKernelChoices::Cross => {
             vec![0, 1, 0, 1, 1, 1, 0, 1, 0]
         }
-        MorphologicalKernelChoices::DiamondKernel => {
+        MorphologicalKernelChoices::Diamond => {
             vec![0, 1, 0, 1, 1, 1, 0, 1, 0]
         }
-        MorphologicalKernelChoices::HorizontalKernel => {
+        MorphologicalKernelChoices::Horizontal => {
             vec![1, 1, 1, 0, 0, 0, 1, 1, 1]
         }
-        MorphologicalKernelChoices::VerticalKernel => {
+        MorphologicalKernelChoices::Vertical => {
             vec![1, 0, 1, 1, 0, 1, 1, 0, 1]
         }
-        MorphologicalKernelChoices::DiagonalKernel => {
+        MorphologicalKernelChoices::Diagonal => {
             vec![0, 0, 1, 0, 1, 0, 1, 0, 0]
         }
-        MorphologicalKernelChoices::DiagonalKernel2 => {
+        MorphologicalKernelChoices::Diagonal2 => {
             vec![1, 0, 0, 0, 1, 0, 0, 0, 1]
         }
     }

@@ -1,15 +1,19 @@
-use image::{GenericImageView, Pixel, Rgba};
+use image::{load_from_memory, GenericImageView, Pixel, Rgba};
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use tokio::{fs::File, io::AsyncReadExt};
 
 use crate::core::{image::Images, pixel::Pixels};
 
-pub fn image_reader<T>(filepath: &str) -> Result<Images<T>, Box<dyn std::error::Error>>
+pub async fn image_reader<T>(filepath: &str) -> Result<Images<T>, Box<dyn std::error::Error>>
 where
     T: Copy + Clone + From<u8> + Into<u8> + std::cmp::PartialEq + Send + Sync,
 {
-    let read_image = image::ImageReader::open(filepath)?.decode()?;
-
+    let mut file = File::open(filepath).await?;
     println!("INFO: Starting to read image from {:?} . . .", filepath);
+    let mut tokio_image_bytes: Vec<u8> = Vec::new();
+    file.read_to_end(&mut tokio_image_bytes).await?; // Reads all bytes until EOF, and places them into buf.
+    let read_image = load_from_memory(&tokio_image_bytes)?;
+
     let mut image_bytes: Vec<Pixels<T>> = Vec::new();
 
     let read_pixels = (0..read_image.height())
@@ -20,7 +24,7 @@ where
                 .map(|w_index| {
                     let pixel = read_image.get_pixel(w_index, h_index).to_rgba();
                     Pixels::new(
-                        (*pixel.channels().get(0).unwrap()).into(),
+                        (*pixel.channels().first().unwrap()).into(),
                         (*pixel.channels().get(1).unwrap()).into(),
                         (*pixel.channels().get(2).unwrap()).into(),
                         (*pixel.channels().get(3).unwrap()).into(),

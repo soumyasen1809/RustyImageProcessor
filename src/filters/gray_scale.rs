@@ -30,33 +30,22 @@ where
     }
 }
 
-pub struct GrayScale<T>
-where
-    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
-{
-    image: Images<T>,
+pub struct GrayScale {
     algo: GrayScaleAlgorithms,
 }
 
-impl<T> GrayScale<T>
-where
-    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
-{
-    pub fn new(image: &Images<T>, algo: GrayScaleAlgorithms) -> Self {
-        Self {
-            image: image.clone(),
-            algo,
-        }
+impl GrayScale {
+    pub fn new(algo: GrayScaleAlgorithms) -> Self {
+        Self { algo }
     }
 }
 
-impl<T> Operation<T> for GrayScale<T>
+impl<T> Operation<T> for GrayScale
 where
     T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
-    fn apply(&self) -> Images<T> {
-        let new_pixel = self
-            .image
+    fn apply(&self, old_image: &Images<T>) -> Images<T> {
+        let new_pixel = old_image
             .get_image()
             .into_par_iter()
             .map(|pix| {
@@ -71,9 +60,9 @@ where
             .collect::<Vec<Pixels<T>>>();
 
         Images::new(
-            self.image.get_width(),
-            self.image.get_height(),
-            self.image.get_channels(),
+            old_image.get_width(),
+            old_image.get_height(),
+            old_image.get_channels(),
             new_pixel.clone(),
         )
     }

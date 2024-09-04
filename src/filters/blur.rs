@@ -15,45 +15,35 @@ fn select_smoothing_kernel(choice: SmoothingKernelChoices) -> Vec<u8> {
     }
 }
 
-pub struct Blur<T>
-where
-    T: Copy + Clone + From<u8> + std::cmp::PartialEq,
-{
-    image: Images<T>,
+pub struct Blur {
     kernel_choice: SmoothingKernelChoices,
 }
 
-impl<T> Blur<T>
-where
-    T: Copy + Clone + From<u8> + std::cmp::PartialEq,
-{
-    pub fn new(image: &Images<T>, kernel_choice: SmoothingKernelChoices) -> Self {
-        Self {
-            image: image.clone(),
-            kernel_choice,
-        }
+impl Blur {
+    pub fn new(kernel_choice: SmoothingKernelChoices) -> Self {
+        Self { kernel_choice }
     }
 }
 
 // AI: Algorithm from Gemini
-impl<T> Operation<T> for Blur<T>
+impl<T> Operation<T> for Blur
 where
     T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync, // Send + Sync required for Rayon to safely pass T between threads
 {
-    fn apply(&self) -> Images<T> {
+    fn apply(&self, old_image: &Images<T>) -> Images<T> {
         let kernel = select_smoothing_kernel(self.kernel_choice);
         let kernel_size: u32 = 3;
         let kernel_normalizer: u32 = kernel.iter().map(|x| *x as u32).sum(); // Kernel sum normalization gives darker images
                                                                              // let kernel_normalizer: u32 = *kernel.iter().max().unwrap() as u32;
         let half_kernel_size = kernel_size / 2;
 
-        let output_width = self.image.get_width() - 2 * half_kernel_size;
-        let output_height = self.image.get_height() - 2 * half_kernel_size;
+        let output_width = old_image.get_width() - 2 * half_kernel_size;
+        let output_height = old_image.get_height() - 2 * half_kernel_size;
 
-        let new_pixel = (half_kernel_size..self.image.get_height() - half_kernel_size)
+        let new_pixel = (half_kernel_size..old_image.get_height() - half_kernel_size)
             .into_par_iter()
             .flat_map(|y_index| {
-                (half_kernel_size..self.image.get_width() - half_kernel_size)
+                (half_kernel_size..old_image.get_width() - half_kernel_size)
                     .into_par_iter()
                     .map(|x_index| {
                         let sum_vec: Vec<(u32, u32, u32)> = (0..=half_kernel_size)
@@ -62,8 +52,7 @@ where
                                 (0..=half_kernel_size)
                                     .into_par_iter()
                                     .map(|dx| {
-                                        let pixel = self
-                                            .image
+                                        let pixel = old_image
                                             .get_pixel_at(
                                                 x_index + dx - half_kernel_size,
                                                 y_index + dy - half_kernel_size,
@@ -72,9 +61,9 @@ where
                                         let kernel_val =
                                             *kernel.get((dy * kernel_size + dx) as usize).unwrap();
                                         (
-                                            (pixel.get_red().into() as u32) * (kernel_val as u32),
-                                            (pixel.get_green().into() as u32) * (kernel_val as u32),
-                                            (pixel.get_blue().into() as u32) * (kernel_val as u32),
+                                            pixel.get_red().into() * (kernel_val as u32),
+                                            pixel.get_green().into() * (kernel_val as u32),
+                                            pixel.get_blue().into() * (kernel_val as u32),
                                         )
                                     })
                                     .collect::<Vec<(u32, u32, u32)>>()
@@ -95,7 +84,7 @@ where
                             ((sum_r / kernel_normalizer).clamp(0, 255) as u8).into(),
                             ((sum_g / kernel_normalizer).clamp(0, 255) as u8).into(),
                             ((sum_b / kernel_normalizer).clamp(0, 255) as u8).into(),
-                            (255 as u8).into(),
+                            255_u8.into(),
                         )
                     })
                     .collect::<Vec<Pixels<T>>>()
@@ -105,7 +94,7 @@ where
         Images::new(
             output_width,
             output_height,
-            self.image.get_channels(),
+            old_image.get_channels(),
             new_pixel.clone(),
         )
     }

@@ -19,43 +19,33 @@ fn select_edge_detecting_kernel(choice: EdgeDetectingKernelChoices) -> Vec<i32> 
     }
 }
 
-pub struct EdgeDetection<T>
-where
-    T: Copy + Clone + From<u8> + std::cmp::PartialEq,
-{
-    image: Images<T>,
+pub struct EdgeDetection {
     kernel_choice: EdgeDetectingKernelChoices,
 }
 
-impl<T> EdgeDetection<T>
-where
-    T: Copy + Clone + From<u8> + std::cmp::PartialEq,
-{
-    pub fn new(image: &Images<T>, kernel_choice: EdgeDetectingKernelChoices) -> Self {
-        Self {
-            image: image.clone(),
-            kernel_choice,
-        }
+impl EdgeDetection {
+    pub fn new(kernel_choice: EdgeDetectingKernelChoices) -> Self {
+        Self { kernel_choice }
     }
 }
 
-impl<T> Operation<T> for EdgeDetection<T>
+impl<T> Operation<T> for EdgeDetection
 where
     T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
 {
-    fn apply(&self) -> Images<T> {
+    fn apply(&self, old_image: &Images<T>) -> Images<T> {
         let kernel: Vec<i32> = select_edge_detecting_kernel(self.kernel_choice);
 
         let kernel_size: u32 = 3;
         let half_kernel_size = kernel_size / 2;
 
-        let output_width = self.image.get_width() - 2 * half_kernel_size;
-        let output_height = self.image.get_height() - 2 * half_kernel_size;
+        let output_width = old_image.get_width() - 2 * half_kernel_size;
+        let output_height = old_image.get_height() - 2 * half_kernel_size;
 
-        let new_pixel = (half_kernel_size..self.image.get_height() - half_kernel_size)
+        let new_pixel = (half_kernel_size..old_image.get_height() - half_kernel_size)
             .into_par_iter()
             .flat_map(|y_index| {
-                (half_kernel_size..self.image.get_width() - half_kernel_size)
+                (half_kernel_size..old_image.get_width() - half_kernel_size)
                     .into_par_iter()
                     .map(|x_index| {
                         let sum_vec: Vec<(i32, i32, i32)> = (0..kernel_size)
@@ -64,8 +54,7 @@ where
                                 (0..kernel_size)
                                     .into_par_iter()
                                     .map(|dx| {
-                                        let pixel = self
-                                            .image
+                                        let pixel = old_image
                                             .get_pixel_at(
                                                 x_index + dx - half_kernel_size,
                                                 y_index + dy - half_kernel_size,
@@ -101,7 +90,7 @@ where
                             (sum_r.clamp(0, 255) as u8).into(),
                             (sum_g.clamp(0, 255) as u8).into(),
                             (sum_b.clamp(0, 255) as u8).into(),
-                            (255 as u8).into(),
+                            255_u8.into(),
                         )
                     })
                     .collect::<Vec<Pixels<T>>>()
@@ -111,7 +100,7 @@ where
         Images::new(
             output_width,
             output_height,
-            self.image.get_channels(),
+            old_image.get_channels(),
             new_pixel.clone(),
         )
     }

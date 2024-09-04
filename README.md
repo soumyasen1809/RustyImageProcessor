@@ -165,6 +165,23 @@ For example, a distribution like:
 ```
 represents the number of pixels with that intensity
 
+## Observations:
+Recommended Transformations:
+```rust
+
+TransformationOperations::Rotate(RotatingOperations::<Any of your choice>),
+TransformationOperations::Resize(ResizingOperations::BilinearInterpolation(<Any dimensions desired>)),
+FilteringOperations::GrayScale(GrayScaleAlgorithms::Luminosity),
+FilteringOperations::Smoothing(SmoothingKernelChoices::Gaussian),
+CroppingOperations::SimpleCrop(<Any dimensions desired>),
+FilteringOperations::EdgeDetecting(EdgeDetectingKernelChoices::Emboss),
+FilteringOperations::Sharpening(SharpeningKernelChoices::EdgeEnhancement),
+FilteringOperations::Morphological(MorphologicalOperations::Erode(MorphologicalKernelChoices::CrossKernel)),
+FilteringOperations::Morphological(MorphologicalOperations::Dialate(MorphologicalKernelChoices::DiamondKernel)),
+Gamma Correction with value 0.5
+
+```
+
 
 <!-- Check: https://github.com/mbrlabs/pixl/tree/master/src/pixl -->
 <!-- https://medium.com/@lahiru.19/a-guide-to-image-processing-from-scratch-7a6a413fb682 -->

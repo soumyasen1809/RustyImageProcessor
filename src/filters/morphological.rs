@@ -1,97 +1,81 @@
 use crate::core::{image::Images, operations::Operation, pixel::Pixels};
 
-pub enum MorphologicalOperations {
-    Erode(MorphologicalKernelChoices),
-    Dialate(MorphologicalKernelChoices),
-}
-
 #[derive(Clone, Copy)]
 pub enum MorphologicalKernelChoices {
-    CrossKernel,
-    DiamondKernel,
-    HorizontalKernel,
-    VerticalKernel,
-    DiagonalKernel,
-    DiagonalKernel2,
+    Cross,
+    Diamond,
+    Horizontal,
+    Vertical,
+    Diagonal,
+    Diagonal2,
 }
 
 fn choose_kernel(kernel: MorphologicalKernelChoices) -> Vec<i32> {
     match kernel {
-        MorphologicalKernelChoices::CrossKernel => {
+        MorphologicalKernelChoices::Cross => {
             vec![0, 1, 0, 1, 1, 1, 0, 1, 0]
         }
-        MorphologicalKernelChoices::DiamondKernel => {
+        MorphologicalKernelChoices::Diamond => {
             vec![0, 1, 0, 1, 1, 1, 0, 1, 0]
         }
-        MorphologicalKernelChoices::HorizontalKernel => {
+        MorphologicalKernelChoices::Horizontal => {
             vec![1, 1, 1, 0, 0, 0, 1, 1, 1]
         }
-        MorphologicalKernelChoices::VerticalKernel => {
+        MorphologicalKernelChoices::Vertical => {
             vec![1, 0, 1, 1, 0, 1, 1, 0, 1]
         }
-        MorphologicalKernelChoices::DiagonalKernel => {
+        MorphologicalKernelChoices::Diagonal => {
             vec![0, 0, 1, 0, 1, 0, 1, 0, 0]
         }
-        MorphologicalKernelChoices::DiagonalKernel2 => {
+        MorphologicalKernelChoices::Diagonal2 => {
             vec![1, 0, 0, 0, 1, 0, 0, 0, 1]
         }
     }
 }
 
-pub struct Erosion<T>
-where
-    T: Copy + Clone + From<u8> + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
-{
-    image: Images<T>,
+pub struct Erosion {
     kernel_choice: MorphologicalKernelChoices,
 }
 
-impl<T> Erosion<T>
-where
-    T: Copy + Clone + From<u8> + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
-{
-    pub fn new(image: &Images<T>, kernel_choice: MorphologicalKernelChoices) -> Self {
-        Self {
-            image: image.clone(),
-            kernel_choice,
-        }
+impl Erosion {
+    pub fn new(kernel_choice: MorphologicalKernelChoices) -> Self {
+        Self { kernel_choice }
     }
 }
 
-impl<T> Operation<T> for Erosion<T>
+impl<T> Operation<T> for Erosion
 where
     T: Copy + Clone + From<u8> + From<u8> + Into<u32> + std::cmp::PartialEq + Ord + Send + Sync,
 {
-    fn apply(&self) -> Images<T> {
+    fn apply(&self, old_image: &Images<T>) -> Images<T> {
         let mut new_image: Images<T> = Images::new(
-            self.image.get_width(),
-            self.image.get_height(),
-            self.image.get_channels(),
+            old_image.get_width(),
+            old_image.get_height(),
+            old_image.get_channels(),
             Vec::new(),
         );
         let mut image_data: Vec<Pixels<T>> = vec![
             Pixels::default();
-            (self.image.get_width() * self.image.get_height())
+            (old_image.get_width() * old_image.get_height())
                 .try_into()
                 .unwrap()
         ];
 
         let kernel: Vec<i32> = choose_kernel(self.kernel_choice);
 
-        for y_index in 1..self.image.get_height() - 1 {
-            for x_index in 1..self.image.get_width() - 1 {
+        for y_index in 1..old_image.get_height() - 1 {
+            for x_index in 1..old_image.get_width() - 1 {
                 let mut min_val: (T, T, T, T) = (255.into(), 255.into(), 255.into(), 255.into());
 
                 for index in 0..kernel.len() {
                     let dx = (index % 3) as i32 - 1;
                     let dy = (index / 3) as i32 - 1;
                     if (x_index as i32) + dx >= 0
-                        && (x_index as i32) + dx < self.image.get_width() as i32
+                        && (x_index as i32) + dx < old_image.get_width() as i32
                         && (y_index as i32) + dy >= 0
-                        && (y_index as i32) + dy < self.image.get_height() as i32
+                        && (y_index as i32) + dy < old_image.get_height() as i32
                     {
-                        let pix = self
-                            .image
+                        let pix = old_image
                             .get_pixel_at(
                                 (x_index as i32 + dx).try_into().unwrap(),
                                 (y_index as i32 + dy).try_into().unwrap(),
@@ -119,60 +103,49 @@ where
     }
 }
 
-pub struct Dilation<T>
-where
-    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
-{
-    image: Images<T>,
+pub struct Dilation {
     kernel_choice: MorphologicalKernelChoices,
 }
 
-impl<T> Dilation<T>
-where
-    T: Copy + Clone + From<u8> + Into<u32> + std::cmp::PartialEq + Send + Sync,
-{
-    pub fn new(image: &Images<T>, kernel_choice: MorphologicalKernelChoices) -> Self {
-        Self {
-            image: image.clone(),
-            kernel_choice,
-        }
+impl Dilation {
+    pub fn new(kernel_choice: MorphologicalKernelChoices) -> Self {
+        Self { kernel_choice }
     }
 }
 
-impl<T> Operation<T> for Dilation<T>
+impl<T> Operation<T> for Dilation
 where
     T: Copy + Clone + From<u8> + From<u8> + Into<u32> + std::cmp::PartialEq + Ord + Send + Sync,
 {
-    fn apply(&self) -> Images<T> {
+    fn apply(&self, old_image: &Images<T>) -> Images<T> {
         let mut new_image: Images<T> = Images::new(
-            self.image.get_width(),
-            self.image.get_height(),
-            self.image.get_channels(),
+            old_image.get_width(),
+            old_image.get_height(),
+            old_image.get_channels(),
             Vec::new(),
         );
         let mut image_data: Vec<Pixels<T>> = vec![
             Pixels::default();
-            (self.image.get_width() * self.image.get_height())
+            (old_image.get_width() * old_image.get_height())
                 .try_into()
                 .unwrap()
         ];
 
         let kernel: Vec<i32> = choose_kernel(self.kernel_choice);
 
-        for y_index in 1..self.image.get_height() - 1 {
-            for x_index in 1..self.image.get_width() - 1 {
+        for y_index in 1..old_image.get_height() - 1 {
+            for x_index in 1..old_image.get_width() - 1 {
                 let mut max_val: (T, T, T, T) = (0.into(), 0.into(), 0.into(), 0.into());
 
                 for index in 0..kernel.len() {
                     let dx = (index % 3) as i32 - 1;
                     let dy = (index / 3) as i32 - 1;
                     if (x_index as i32) + dx >= 0
-                        && (x_index as i32) + dx < self.image.get_width() as i32
+                        && (x_index as i32) + dx < old_image.get_width() as i32
                         && (y_index as i32) + dy >= 0
-                        && (y_index as i32) + dy < self.image.get_height() as i32
+                        && (y_index as i32) + dy < old_image.get_height() as i32
                     {
-                        let pix = self
-                            .image
+                        let pix = old_image
                             .get_pixel_at(
                                 (x_index as i32 + dx).try_into().unwrap(),
                                 (y_index as i32 + dy).try_into().unwrap(),

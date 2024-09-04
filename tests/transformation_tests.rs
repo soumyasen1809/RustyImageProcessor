@@ -11,7 +11,7 @@ where
             (idx as u8 * 3).into(),
             (idx as u8 * 6).into(),
             (idx as u8 * 9).into(),
-            (255 as u8).into(),
+            255_u8.into(),
         )
     });
 
@@ -28,7 +28,7 @@ where
             (idx as u8 * 3).into(),
             (idx as u8 * 6).into(),
             (idx as u8 * 9).into(),
-            (255 as u8).into(),
+            255_u8.into(),
         )
     });
 
@@ -54,7 +54,7 @@ mod tests {
         let img = common_setup_complex();
 
         // Apply cropping operation
-        let cropped_img = Crop::new((1, 1), 2, 2, &img).apply();
+        let cropped_img = Crop::new((1, 1), 2, 2).apply(&img);
 
         // Assert the result
         let expected_img = Images::new(
@@ -81,7 +81,7 @@ mod tests {
         let img = common_setup_complex();
 
         // Apply cropping operation
-        let resized_img = ResizeNearestNeighbour::new(2, 2, &img).apply();
+        let resized_img = ResizeNearestNeighbour::new(2, 2).apply(&img);
 
         // Assert the result
         let expected_img = Images::new(
@@ -104,7 +104,7 @@ mod tests {
         let img = common_setup_complex();
 
         // Apply cropping operation
-        let resized_img = ResizeBilinearInterpolation::new(2, 2, &img).apply();
+        let resized_img = ResizeBilinearInterpolation::new(2, 2).apply(&img);
 
         // Assert the result
         let expected_img = Images::new(
@@ -127,7 +127,7 @@ mod tests {
         let img = common_setup_simple();
 
         // Apply cropping operation
-        let resized_img = FlipVertical::new(&img).apply();
+        let resized_img = FlipVertical::new().apply(&img);
 
         // Assert the result
         let expected_img = Images::new(
@@ -150,7 +150,7 @@ mod tests {
         let img = common_setup_simple();
 
         // Apply cropping operation
-        let resized_img = FlipHorizontal::new(&img).apply();
+        let resized_img = FlipHorizontal::new().apply(&img);
 
         // Assert the result
         let expected_img = Images::new(
@@ -173,7 +173,7 @@ mod tests {
         let img = common_setup_simple();
 
         // Apply cropping operation
-        let resized_img = Flip90Left::new(&img).apply();
+        let resized_img = Flip90Left::new().apply(&img);
 
         // Assert the result
         let expected_img = Images::new(
@@ -196,7 +196,7 @@ mod tests {
         let img = common_setup_simple();
 
         // Apply cropping operation
-        let resized_img = Flip90Right::new(&img).apply();
+        let resized_img = Flip90Right::new().apply(&img);
 
         // Assert the result
         let expected_img = Images::new(

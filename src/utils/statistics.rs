@@ -95,10 +95,10 @@ where
 {
     let mut mean = (0.0, 0.0, 0.0, 0.0);
     for pix in image.get_image() {
-        mean.0 += pix.get_red().into() as f64;
-        mean.1 += pix.get_green().into() as f64;
-        mean.2 += pix.get_blue().into() as f64;
-        mean.3 += pix.get_alpha().into() as f64;
+        mean.0 += pix.get_red().into();
+        mean.1 += pix.get_green().into();
+        mean.2 += pix.get_blue().into();
+        mean.3 += pix.get_alpha().into();
     }
     mean.0 /= image.get_image().len() as f64;
     mean.1 /= image.get_image().len() as f64;
@@ -116,10 +116,10 @@ where
     let mean = compute_mean(image);
 
     for pix in image.get_image() {
-        variance.0 += (pix.get_red().into() as f64 - mean.0).powi(2);
-        variance.1 += (pix.get_green().into() as f64 - mean.1).powi(2);
-        variance.2 += (pix.get_blue().into() as f64 - mean.2).powi(2);
-        variance.3 += (pix.get_alpha().into() as f64 - mean.3).powi(2);
+        variance.0 += (pix.get_red().into() - mean.0).powi(2);
+        variance.1 += (pix.get_green().into() - mean.1).powi(2);
+        variance.2 += (pix.get_blue().into() - mean.2).powi(2);
+        variance.3 += (pix.get_alpha().into() - mean.3).powi(2);
     }
     variance.0 /= image.get_image().len() as f64;
     variance.1 /= image.get_image().len() as f64;
